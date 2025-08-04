@@ -209,15 +209,45 @@
       });
     });
 
-    document.getElementById('profissional').addEventListener('input', () => {
-      const p = profissionais.find(p => p.nome === profissional.value);
-      if (p) {
-        funcao.value = p.funcao || '';
-        dadosPix.value = p.pix || '';
-        titularConta.value = p.titular || '';
-        valorAcordado.value = p.valor || '';
-      }
-    });
+   document.getElementById('profissional').addEventListener('input', () => {
+  const nomeDigitado = profissional.value.trim().toUpperCase();
+  const p = profissionais.find(p => p.nome.trim().toUpperCase() === nomeDigitado);
+
+  if (p) {
+    // Preenche e bloqueia
+    funcao.value = p.funcao || '';
+    dadosPix.value = p.pix || '';
+    titularConta.value = p.titular || '';
+    valorAcordado.value = p.valor || '';
+
+    funcao.readOnly = true;
+    dadosPix.readOnly = true;
+    titularConta.readOnly = true;
+    valorAcordado.readOnly = true;
+
+    funcao.style.background = '#eee';
+    dadosPix.style.background = '#eee';
+    titularConta.style.background = '#eee';
+    valorAcordado.style.background = '#eee';
+  } else {
+    // Limpa e desbloqueia
+    funcao.value = '';
+    dadosPix.value = '';
+    titularConta.value = '';
+    valorAcordado.value = '';
+
+    funcao.readOnly = false;
+    dadosPix.readOnly = false;
+    titularConta.readOnly = false;
+    valorAcordado.readOnly = false;
+
+    funcao.style.background = '';
+    dadosPix.style.background = '';
+    titularConta.style.background = '';
+    valorAcordado.style.background = '';
+  }
+});
+
 
     [valorAcordado, desconto].forEach(input => {
       input.addEventListener('input', () => {
