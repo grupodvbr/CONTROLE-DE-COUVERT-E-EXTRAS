@@ -1,249 +1,287 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Painel Couvert</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * { box-sizing: border-box; }
 
     body {
       font-family: Arial, sans-serif;
+      background: #f4f4f4;
       margin: 0;
-      background: #f5f5f5;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      background: white;
+      border-bottom: 1px solid #ccc;
+    }
+
+    header img {
+      height: 50px;
+      margin-right: 20px;
+    }
+
+    h1 { font-size: 1.5em; }
+
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
       padding: 20px;
     }
 
-    #loader {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
+    label {
+      font-weight: bold;
     }
 
-    #loader img {
-      width: 200px;
-      animation: fadeIn 1.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: scale(0.9); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    h2 { margin-top: 30px; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
     input, select, button {
-      width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ccc;
-      border-radius: 4px; font-size: 14px;
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
     }
-    input[readonly] { background: #eee; }
-    button { background: #2c3e50; color: #fff; cursor: pointer; }
-    button:hover { background: #34495e; }
-    table { width: 100%; margin-top: 20px; border-collapse: collapse; background: white; }
-    th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+
+    input[readonly] {
+      background: #eee;
+    }
+
+    button {
+      background: #2c3e50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #34495e;
+    }
+
+    table {
+      width: calc(100% - 40px);
+      margin: 0 20px 20px;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+
     .pago { background: #c8f7c5; }
     .pendente { background: #f7c5c5; }
+    .lancado { background: #fdf4c5; }
+
+    .actions { display: flex; gap: 8px; }
+
+    #filtros {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px 10px;
+      gap: 10px;
+    }
+
+    @media (max-width: 768px) {
+      #filtros {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
   </style>
 </head>
 <body>
-  <div id="loader">
-    <img src="https://static.wixstatic.com/media/d830b0_8cec50a98bbf4775814dbfa5386585e8~mv2.png" alt="Logo Grupo DV">
-  </div>
-
-  <h1>Painel Couvert</h1>
+  <header>
+    <img src="https://static.wixstatic.com/media/d830b0_8cec50a98bbf4775814dbfa5386585e8~mv2.png" alt="Logo">
+    <h1>Painel Couvert</h1>
+  </header>
 
   <form id="form">
-    <label>Mês</label>
-    <input type="text" name="mes" required placeholder="Agosto de 2025">
-    
-    <label>Data</label>
-    <input type="date" name="data" required>
-
-    <label>Profissional</label>
-    <input list="listaProfissionais" name="profissional" id="profissional" required>
-    <datalist id="listaProfissionais"></datalist>
-
-    <label>Função</label>
-    <input type="text" name="funcao" id="funcao">
-
-    <label>Dados bancários / Pix</label>
-    <input type="text" name="dadosPix" id="dadosPix">
-
-    <label>Tempo</label>
-    <input type="text" name="tempo">
-
-    <label>Valor acordado (R$)</label>
-    <input type="number" name="valorAcordado" id="valorAcordado">
-
-    <label>Bonificação (R$)</label>
-    <input type="number" name="bonificacao" id="bonificacao">
-
-    <label>Desconto de consumo (R$)</label>
-    <input type="number" name="desconto" id="desconto">
-
-    <label>Valor final (R$)</label>
-    <input type="number" name="valorFinal" id="valorFinal" readonly>
-
-    <label>Data Pagamento</label>
-    <input type="date" name="dataPagamento">
-
-    <label>Status</label>
-    <select name="status">
-      <option value="PENDENTE">PENDENTE</option>
-      <option value="PAGO">PAGO</option>
-    </select>
-
-    <button type="submit">Salvar</button>
+    <div><label>Mês</label><input type="text" name="mes" required placeholder="Agosto de 2025"></div>
+    <div><label>Data</label><input type="date" name="data" required></div>
+    <div>
+      <label>Profissional</label>
+      <input list="listaProfissionais" name="profissional" id="profissional" required>
+      <datalist id="listaProfissionais"></datalist>
+    </div>
+    <div><label>Função</label><input type="text" name="funcao" id="funcao"></div>
+    <div><label>Dados bancários / Pix</label><input type="text" name="dadosPix" id="dadosPix"></div>
+    <div><label>Tempo</label><input type="text" name="tempo"></div>
+    <div><label>Valor acordado (R$)</label><input type="number" name="valorAcordado" id="valorAcordado"></div>
+    <div><label>Bonificação (R$)</label><input type="number" name="bonificacao" id="bonificacao"></div>
+    <div><label>Desconto de consumo (R$)</label><input type="number" name="desconto" id="desconto"></div>
+    <div><label>Valor final (R$)</label><input type="number" name="valorFinal" id="valorFinal" readonly></div>
+    <div><label>Data Pagamento</label><input type="date" name="dataPagamento"></div>
+    <div>
+      <label>Status</label>
+      <select name="status">
+        <option value="PENDENTE">PENDENTE</option>
+        <option value="LANÇADO">LANÇADO</option>
+        <option value="PAGO">PAGO</option>
+      </select>
+    </div>
+    <div style="grid-column: span 3;">
+      <button type="submit">Salvar</button>
+    </div>
   </form>
 
-  <h2>Lançamentos</h2>
+  <div id="filtros">
+    <div>
+      <label>Filtrar por status:</label>
+      <select id="filtroStatus">
+        <option value="TODOS">TODOS</option>
+        <option value="PENDENTE">PENDENTE</option>
+        <option value="LANÇADO">LANÇADO</option>
+        <option value="PAGO">PAGO</option>
+      </select>
+    </div>
+    <button onclick="liquidarEmMassa()">Liquidar em Massa</button>
+  </div>
+
   <table id="tabela">
     <thead>
-      <tr><th>Profissional</th><th>Data</th><th>Valor Final</th><th>Status</th><th>Ações</th></tr>
+      <tr>
+        <th>Profissional</th><th>Data</th><th>Valor Final</th><th>Status</th><th>Ações</th>
+      </tr>
     </thead>
     <tbody></tbody>
   </table>
 
   <script>
-  const URL = 'https://script.google.com/macros/s/AKfycbxcQy_eF_kNRKU_xu0vVeFqP5PY8ukBO0YsFNpSE-duCUCRgBexBr0SD9bpTaC_N0ogjg/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbw5F3VrJxTTo4ClHnCe5lmpVmWoFB31BBiR8_k6DNPZo26fXba_LRHLjPNQYjeUGiScAQ/exec';
+    const form = document.getElementById('form');
+    const filtroStatus = document.getElementById('filtroStatus');
+    let profissionais = [];
+    let dadosLancamentos = [];
 
-  const form = document.getElementById('form');
-  const profissionalInput = document.getElementById('profissional');
-  const funcaoInput = document.getElementById('funcao');
-  const dadosPixInput = document.getElementById('dadosPix');
-  const valorAcordadoInput = document.getElementById('valorAcordado');
-  const bonificacaoInput = document.getElementById('bonificacao');
-  const descontoInput = document.getElementById('desconto');
-  const valorFinalInput = document.getElementById('valorFinal');
+    fetch(`${URL}?acao=profissionais`)
+      .then(res => res.json())
+      .then(data => {
+        profissionais = data;
+        const lista = document.getElementById('listaProfissionais');
+        lista.innerHTML = '';
+        data.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.nome;
+          lista.appendChild(opt);
+        });
+      });
 
-  let profissionais = [];
+    document.getElementById('profissional').addEventListener('input', () => {
+      const p = profissionais.find(p => p.nome === profissional.value);
+      if (p) {
+        funcao.value = p.funcao || '';
+        dadosPix.value = p.pix || '';
+        valorAcordado.value = p.valor || '';
+      }
+    });
 
-  // === Carregar profissionais ===
-  fetch(`${URL}?acao=profissionais`)
-    .then(res => res.json())
-    .then(data => {
-      profissionais = data;
-      const lista = document.getElementById('listaProfissionais');
-      lista.innerHTML = '';
-      data.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p.nome;
-        lista.appendChild(opt);
+    [valorAcordado, bonificacao, desconto].forEach(input => {
+      input.addEventListener('input', () => {
+        const v = parseFloat(valorAcordado.value) || 0;
+        const b = parseFloat(bonificacao.value) || 0;
+        const d = parseFloat(desconto.value) || 0;
+        valorFinal.value = (v - b - d).toFixed(2);
       });
     });
 
-  profissionalInput.addEventListener('input', () => {
-    const p = profissionais.find(p => p.nome === profissionalInput.value);
-    if (p) {
-      funcaoInput.value = p.funcao || '';
-      dadosPixInput.value = p.pix || '';
-      valorAcordadoInput.value = p.valor || '';
-    }
-  });
-
-  // === Cálculo automático ===
-  [valorAcordadoInput, bonificacaoInput, descontoInput].forEach(input => {
-    input.addEventListener('input', () => {
-      const v = parseFloat(valorAcordadoInput.value) || 0;
-      const b = parseFloat(bonificacaoInput.value) || 0;
-      const d = parseFloat(descontoInput.value) || 0;
-      valorFinalInput.value = (v - b - d).toFixed(2);
-    });
-  });
-
-  // === Submeter formulário ===
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-    const dados = Object.fromEntries(new FormData(form));
-    dados.acao = 'adicionar';
-    fetch(URL, {
-      method: 'POST',
-      body: JSON.stringify(dados)
-    }).then(res => res.text())
-      .then(() => {
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const dados = Object.fromEntries(new FormData(form));
+      dados.acao = 'adicionar';
+      fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify(dados)
+      }).then(() => {
         alert('Salvo com sucesso!');
         form.reset();
         carregarLancamentos();
       });
-  });
+    });
 
-  // === Carregar lançamentos ===
-  function carregarLancamentos() {
-    fetch(`${URL}?acao=ler`)
-      .then(res => res.json())
-      .then(data => {
-        const tbody = document.querySelector('#tabela tbody');
-        tbody.innerHTML = '';
-        data.forEach((item, i) => {
-          const tr = document.createElement('tr');
-          tr.className = item.status === 'PAGO' ? 'pago' : 'pendente';
-          const dataFormatada = item.data?.split('T')[0] || '';
-          tr.innerHTML = `
-            <td>${item.profissional}</td>
-            <td>${dataFormatada}</td>
-            <td>R$ ${parseFloat(item.valorFinal).toFixed(2)}</td>
-            <td>${item.status}</td>
-            <td>
-              <div style="display: flex; gap: 8px;">
-                <button style="
-                  flex:1;
-                  background-color: #2c3e50;
-                  color: white;
-                  border: none;
-                  padding: 6px 10px;
-                  border-radius: 4px;
-                  cursor: pointer;
-                " onclick="alterarStatus(${item.index})">Status</button>
+    filtroStatus.addEventListener('change', carregarLancamentos);
 
-                <button style="
-                  flex:1;
-                  background-color: #2c3e50;
-                  color: white;
-                  border: none;
-                  padding: 6px 10px;
-                  border-radius: 4px;
-                  cursor: pointer;
-                " onclick="excluir(${item.index})">Excluir</button>
-              </div>
-            </td>`;
-          tbody.appendChild(tr);
+    function carregarLancamentos() {
+      fetch(`${URL}?acao=ler`)
+        .then(res => res.json())
+        .then(data => {
+          dadosLancamentos = data;
+          const tbody = document.querySelector('#tabela tbody');
+          tbody.innerHTML = '';
+          const filtro = filtroStatus.value;
+          data.forEach(item => {
+            if (filtro !== 'TODOS' && item.status !== filtro) return;
+            const tr = document.createElement('tr');
+            tr.className = item.status.toLowerCase();
+            const dataFormatada = item.data?.split('T')[0] || '';
+            tr.innerHTML = `
+              <td>${item.profissional}</td>
+              <td>${dataFormatada}</td>
+              <td>R$ ${parseFloat(item.valorFinal).toFixed(2)}</td>
+              <td>${item.status}</td>
+              <td>
+                <div class="actions">
+                  <button onclick="alterarStatus(${item.index})">Status</button>
+                  <button onclick="excluir(${item.index})">Excluir</button>
+                </div>
+              </td>`;
+            tbody.appendChild(tr);
+          });
         });
-      });
-  }
+    }
 
-  function alterarStatus(index) {
-    fetch(URL, {
-      method: 'POST',
-      body: JSON.stringify({ acao: 'status', index })
-    }).then(() => carregarLancamentos());
-  }
-
-  function excluir(index) {
-    const senha = prompt("Digite a senha para excluir:");
-    if (senha === '1234') {
+    function alterarStatus(index) {
       fetch(URL, {
         method: 'POST',
-        body: JSON.stringify({ acao: 'excluir', index })
+        body: JSON.stringify({ acao: 'status', index })
       }).then(() => carregarLancamentos());
-    } else {
-      alert("Senha incorreta.");
     }
-  }
 
-  // === Início ===
-  window.onload = () => {
-    setTimeout(() => {
-      const loader = document.getElementById('loader');
-      if (loader) loader.style.display = 'none';
-    }, 2500); // delay de tela inicial
+    function excluir(index) {
+      const senha = prompt("Digite a senha para excluir:");
+      if (senha === '1234') {
+        fetch(URL, {
+          method: 'POST',
+          body: JSON.stringify({ acao: 'excluir', index })
+        }).then(() => carregarLancamentos());
+      } else {
+        alert("Senha incorreta.");
+      }
+    }
 
-    carregarLancamentos();
-  };
-</script>
+    function liquidarEmMassa() {
+      const filtro = filtroStatus.value;
+      if (filtro === 'TODOS' || filtro === 'PAGO') {
+        alert("Selecione um status válido (PENDENTE ou LANÇADO) para liquidar.");
+        return;
+      }
+      const confirmacao = confirm(`Deseja marcar todos os registros com status "${filtro}" como PAGO?`);
+      if (!confirmacao) return;
 
+      const promessas = dadosLancamentos
+        .filter(item => item.status === filtro)
+        .map(item =>
+          fetch(URL, {
+            method: 'POST',
+            body: JSON.stringify({ acao: 'status', index: item.index })
+          })
+        );
+
+      Promise.all(promessas).then(() => {
+        alert("Todos os registros foram atualizados para PAGO.");
+        carregarLancamentos();
+      });
+    }
+
+    window.onload = carregarLancamentos;
+  </script>
+</body>
 </html>
