@@ -265,21 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-      fetch(URL, {
-        method: 'POST',
-        body: JSON.stringify(dados)
-      }).then(() => {
-        form.reset();
-        filtroStatus.value = 'PENDENTE';
-        setTimeout(() => {
-          btn.disabled = false;
-          btn.textContent = 'Salvar';
-          loading.style.display = 'none';
-          carregarLancamentos();
-        }, 1500);
-      });
-    });
-
     filtroStatus.addEventListener('change', carregarLancamentos);
 
     function carregarLancamentos() {
