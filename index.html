@@ -77,14 +77,18 @@
 <body>
 
 <header>
-  <img src="caeaf5a7-e255-4dbc-8429-6654e27c2cc4.png" alt="Logo CB Systems">
+  <img src="logo.png" alt="Logo CB Systems">
   <h1>Controle de Couvert</h1>
 </header>
 
 <form id="couvertForm">
   <label>Mês</label><input type="month" name="mes" required>
   <label>Data</label><input type="date" name="data" required>
-  <label>Profissional</label><input type="text" name="profissional" required>
+
+  <label>Profissional</label>
+  <input type="text" name="profissional" id="profissional" list="listaProfissionais" autocomplete="off" required>
+  <datalist id="listaProfissionais"></datalist>
+
   <label>Função</label><input type="text" name="funcao">
   <label>Dados bancários / Pix</label><input type="text" name="dadosPix">
   <label>Tempo</label><input type="text" name="tempo">
@@ -146,7 +150,6 @@
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     botao.disabled = true;
     botao.innerText = 'Processando...';
 
@@ -228,5 +231,35 @@
     carregarLancamentos();
   }
 
+  async function carregarProfissionais() {
+    try {
+      const res = await fetch(scriptURL + '?acao=profissionais');
+      const lista = await res.json();
+      const datalist = document.getElementById('listaProfissionais');
+      datalist.innerHTML = '';
+      lista.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.nome;
+        datalist.appendChild(option);
+      });
+
+      document.getElementById('profissional').addEventListener('change', e => {
+        const selecionado = lista.find(p => p.nome === e.target.value);
+        if (selecionado) {
+          document.querySelector('[name="funcao"]').value = selecionado.funcao;
+          document.querySelector('[name="dadosPix"]').value = selecionado.pix;
+          document.querySelector('[name="valorAcordado"]').value = selecionado.valor;
+          atualizarValorFinal();
+        }
+      });
+    } catch (e) {
+      console.error("Erro ao carregar profissionais:", e);
+    }
+  }
+
   carregarLancamentos();
+  carregarProfissionais();
 </script>
+
+</body>
+</html>
