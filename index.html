@@ -263,22 +263,43 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const btn = form.querySelector('button[type="submit"]');
-      const loading = document.getElementById('loading-screen');
-      const msg = document.getElementById('loading-message');
-      dados.cpf = dados.cpfCnpj; // garante que cpf será enviado ao Apps Script
+ form.addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = form.querySelector('button[type="submit"]');
+  const loading = document.getElementById('loading-screen');
+  const msg = document.getElementById('loading-message');
+
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  msg.textContent = 'Salvando dados...';
+  loading.style.display = 'flex';
+
+  const dados = Object.fromEntries(new FormData(form));
+  dados.acao = 'adicionar';
+  dados.cpf = dados.cpfCnpj;
+
+  // Formata a dataPagamento no formato DD/MM/AAAA
+  if (dados.dataPagamento) {
+    const [ano, mes, dia] = dados.dataPagamento.split('-');
+    dados.dataPagamento = `${dia}/${mes}/${ano}`;
+  }
+
+  fetch(URL, {
+    method: 'POST',
+    body: JSON.stringify(dados)
+  }).then(() => {
+    form.reset();
+    filtroStatus.value = 'PENDENTE';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'Salvar';
+      loading.style.display = 'none';
+      carregarLancamentos();
+    }, 1500);
+  });
+});
 
 
-      btn.disabled = true;
-      btn.textContent = 'Salvando...';
-      msg.textContent = 'Salvando dados...';
-      loading.style.display = 'flex';
-
-     const dados = Object.fromEntries(new FormData(form));
-dados.acao = 'adicionar';
-dados.cpf = dados.cpfCnpj;
 
 // formata a dataPagamento no formato DD/MM/AAAA
 if (dados.dataPagamento) {
