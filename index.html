@@ -216,22 +216,42 @@
       const nomeDigitado = profissional.value.trim().toUpperCase();
       const p = profissionais.find(p => p.nome.trim().toUpperCase() === nomeDigitado);
 
-      if (p) {
+ if (p) {
   funcao.value = p.funcao || '';
   dadosPix.value = p.pix || '';
   titularConta.value = p.titular || '';
   valorAcordado.value = p.valor || '';
-  cpfCnpj.value = p.cpf || ''; // <-- aqui
+  cpfCnpj.value = p.cpf || '';
 
   funcao.readOnly = true;
   dadosPix.readOnly = true;
   titularConta.readOnly = true;
   valorAcordado.readOnly = false;
+  cpfCnpj.readOnly = true; // CPF/CNPJ bloqueado
   funcao.style.background = '#eee';
   dadosPix.style.background = '#eee';
   titularConta.style.background = '#eee';
+  cpfCnpj.style.background = '#eee'; // Visual bloqueado
   valorAcordado.style.background = '';
 } else {
+  funcao.value = '';
+  dadosPix.value = '';
+  titularConta.value = '';
+  valorAcordado.value = '';
+  cpfCnpj.value = '';
+
+  funcao.readOnly = false;
+  dadosPix.readOnly = false;
+  titularConta.readOnly = false;
+  valorAcordado.readOnly = false;
+  cpfCnpj.readOnly = false; // CPF/CNPJ desbloqueado
+  funcao.style.background = '';
+  dadosPix.style.background = '';
+  titularConta.style.background = '';
+  cpfCnpj.style.background = '';
+  valorAcordado.style.background = '';
+}
+else {
   funcao.value = '';
   dadosPix.value = '';
   titularConta.value = '';
