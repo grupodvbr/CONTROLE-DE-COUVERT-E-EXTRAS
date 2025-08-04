@@ -34,19 +34,6 @@
       from { opacity: 0; transform: scale(0.95); }
       to { opacity: 1; transform: scale(1); }
     }
-    #mensagem-confirmacao {
-      display: none;
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #2ecc71;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 6px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.2);
-      font-weight: bold;
-      z-index: 10000;
-    }
     header {
       display: flex;
       align-items: center;
@@ -88,56 +75,74 @@
     button:hover {
       background: #34495e;
     }
-    .cpf-cnpj-group {
+    table {
+      width: calc(100% - 40px);
+      margin: 0 20px 20px;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+      font-size: 13px;
+    }
+    .pago { background: #c8f7c5; }
+    .pendente { background: #f7c5c5; }
+    .lancado { background: #fdf4c5; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    #filtros {
       display: flex;
-      flex-direction: column;
-    }
-    .cpf-cnpj-group label {
-      margin-bottom: 4px;
-    }
-  </style>
-  <script>
-    function aplicarMascaraCpfCnpj(valor) {
-      valor = valor.replace(/\D/g, '');
-      if (valor.length <= 11) {
-        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-        valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-      } else {
-        valor = valor.replace(/(\d{2})(\d)/, '$1.$2');
-        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
-        valor = valor.replace(/(\d{3})(\d)/, '$1/$2');
-        valor = valor.replace(/(\d{4})(\d{1,2})$/, '$1-$2');
-      }
-      return valor;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px 10px;
+      gap: 10px;
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const cpfCnpjInput = document.getElementById('cpfCnpj');
-      cpfCnpjInput.addEventListener('input', () => {
-        cpfCnpjInput.value = aplicarMascaraCpfCnpj(cpfCnpjInput.value);
-      });
-    });
-  </script>
+    #filtros select {
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    #filtros button {
+      width: auto;
+      padding: 8px 16px;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    #filtros button:hover {
+      background: #34495e;
+    }
+
+    @media (max-width: 768px) {
+      #filtros {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
 <body>
+
   <div id="loading-screen">
     <img src="https://static.wixstatic.com/media/d830b0_8cec50a98bbf4775814dbfa5386585e8~mv2.png" alt="Logo">
     <p id="loading-message">Carregando...</p>
   </div>
-  <div id="mensagem-confirmacao">Dados salvos com sucesso!</div>
+
   <header>
     <img src="https://static.wixstatic.com/media/d830b0_8cec50a98bbf4775814dbfa5386585e8~mv2.png" alt="Logo">
-    <h1>CONTROLE DE COUVERT E EXTRAS - DELÍCIA GOURMET</h1>
+    <h1>Painel Couvert</h1>
   </header>
+
   <form id="form">
     <div><label>Mês</label><input type="text" name="mes" required></div>
     <div><label>Data</label><input type="date" name="data" required></div>
     <div><label>Profissional</label><input list="listaProfissionais" name="profissional" id="profissional" required><datalist id="listaProfissionais"></datalist></div>
-    <div class="cpf-cnpj-group">
-      <label>CPF ou CNPJ</label>
-      <input type="text" name="cpfCnpj" id="cpfCnpj" placeholder="Digite o CPF ou CNPJ" required>
-    </div>
     <div><label>Função</label><input type="text" name="funcao" id="funcao"></div>
     <div><label>Dados bancários / Pix</label><input type="text" name="dadosPix" id="dadosPix"></div>
     <div><label>Titular da Conta</label><input type="text" name="titularConta" id="titularConta"></div>
@@ -152,9 +157,13 @@
         <option value="PENDENTE">PENDENTE</option>
         <option value="LANÇADO">LANÇADO</option>
         <option value="PAGO">PAGO</option>
+      </select>
     </div>
-    <div style="grid-column: span 3;"><button type="submit">Salvar</button></div>
+    <div style="grid-column: span 3;">
+      <button type="submit">Salvar</button>
+    </div>
   </form>
+
   <div id="filtros">
     <div>
       <label>Filtrar por status:</label>
@@ -167,14 +176,16 @@
     </div>
     <button onclick="liquidarEmMassa()">Liquidar em Massa</button>
   </div>
+
   <table id="tabela">
     <thead>
       <tr><th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th><th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th><th>Data Pagamento</th><th>Status</th><th>Ações</th></tr>
     </thead>
     <tbody></tbody>
   </table>
+
   <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbwUewpp-UTcyNT7DRvj7HbdQHbSnUNCz1VCKzfhBTDBGQjMdQvGuNeKaQk89QeJZ5UiGw/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbyUghvcMJlE5I0xmGzwBp9KpWLu9htIsNh3ixW_ghCS9aH8oKyC9nRbOVjhD1YeiqZj9Q/exec';
     const form = document.getElementById('form');
     const filtroStatus = document.getElementById('filtroStatus');
     let profissionais = [], dadosLancamentos = [];
