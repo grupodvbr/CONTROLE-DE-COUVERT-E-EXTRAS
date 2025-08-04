@@ -125,6 +125,8 @@
   const bonificacao = document.getElementById('bonificacao');
   const desconto = document.getElementById('desconto');
   const valorFinal = document.getElementById('valorFinal');
+  const form = document.getElementById('couvertForm');
+  const botao = form.querySelector('button[type="submit"]');
 
   function formatarReal(valor) {
     return `R$ ${Number(valor).toFixed(2).replace('.', ',')}`;
@@ -142,70 +144,89 @@
   [valorAcordado, bonificacao, desconto].forEach(el => el.addEventListener('input', atualizarValorFinal));
   atualizarValorFinal();
 
-  document.getElementById('couvertForm').addEventListener('submit', e => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+
+    botao.disabled = true;
+    botao.innerText = 'Processando...';
+
+    const formData = new FormData(form);
     const data = {};
     formData.forEach((value, key) => {
-      data[key] = (key === 'valorFinal') ? document.getElementById('valorFinal').dataset.valorNumerico : value;
+      data[key] = key === 'valorFinal'
+        ? document.getElementById('valorFinal').dataset.valorNumerico || "0"
+        : value;
     });
     data.acao = 'adicionar';
 
-    fetch(scriptURL, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: { 'Content-Type': 'application/json' }
-    }).then(() => {
-      alert("Registro salvo!");
-      e.target.reset();
-      atualizarValorFinal();
-      carregarLancamentos();
-    });
+    try {
+      const resposta = await fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      });
+
+      if (resposta.ok) {
+        alert("✅ Registro salvo com sucesso!");
+        form.reset();
+        atualizarValorFinal();
+        carregarLancamentos();
+      } else {
+        alert("❌ Erro ao salvar. Verifique a planilha ou script.");
+      }
+    } catch (erro) {
+      alert("❌ Erro de conexão. Tente novamente.");
+      console.error(erro);
+    }
+
+    botao.disabled = false;
+    botao.innerText = 'Cadastrar';
   });
 
-  function carregarLancamentos() {
-    fetch(scriptURL + '?acao=ler')
-      .then(res => res.json())
-      .then(data => {
-        const tbody = document.querySelector('#tabelaCouvert tbody');
-        tbody.innerHTML = '';
-        data.forEach((item, i) => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td>${item.profissional}</td>
-            <td>${item.data}</td>
-            <td>${formatarReal(item.valorFinal)}</td>
-            <td>${item.status}</td>
-            <td>
-              <button class="btn-status" onclick="alterarStatus(${i})">Alterar</button>
-              <button class="btn-excluir" onclick="excluir(${i})">Excluir</button>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
+  async function carregarLancamentos() {
+    try {
+      const res = await fetch(scriptURL + '?acao=ler');
+      const data = await res.json();
+      const tbody = document.querySelector('#tabelaCouvert tbody');
+      tbody.innerHTML = '';
+      data.forEach((item, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.profissional}</td>
+          <td>${item.data}</td>
+          <td>${formatarReal(item.valorFinal)}</td>
+          <td>${item.status}</td>
+          <td>
+            <button class="btn-status" onclick="alterarStatus(${i})">Alterar</button>
+            <button class="btn-excluir" onclick="excluir(${i})">Excluir</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
       });
+    } catch (e) {
+      console.error('Erro ao carregar lançamentos:', e);
+    }
   }
 
-  function alterarStatus(index) {
-    fetch(scriptURL, {
+  async function alterarStatus(index) {
+    await fetch(scriptURL, {
       method: 'POST',
       body: JSON.stringify({ acao: 'status', index }),
       headers: { 'Content-Type': 'application/json' }
-    }).then(() => carregarLancamentos());
+    });
+    carregarLancamentos();
   }
 
-  function excluir(index) {
+  async function excluir(index) {
     const senha = prompt("Digite a senha para excluir:");
     if (senha !== senhaExclusao) return alert("Senha incorreta!");
-    fetch(scriptURL, {
+    await fetch(scriptURL, {
       method: 'POST',
       body: JSON.stringify({ acao: 'excluir', index }),
       headers: { 'Content-Type': 'application/json' }
-    }).then(() => carregarLancamentos());
+    });
+    carregarLancamentos();
   }
 
   carregarLancamentos();
 </script>
-
-</body>
-</html>
