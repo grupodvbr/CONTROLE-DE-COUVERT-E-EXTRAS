@@ -444,6 +444,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     });
+
+    <script>
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const formData = new FormData(form);
+  const dados = {};
+  formData.forEach((valor, chave) => dados[chave] = valor);
+  dados.acao = 'adicionar';
+
+  const loading = document.getElementById('loading-screen');
+  const msg = document.getElementById('loading-message');
+
+  msg.textContent = 'Salvando...';
+  loading.style.display = 'flex';
+
+  fetch(URL, {
+    method: 'POST',
+    body: JSON.stringify(dados)
+  })
+    .then(res => res.text())
+    .then(resp => {
+      loading.style.display = 'none';
+      if (resp.trim() === 'OK') {
+        alert("Registro salvo com sucesso!");
+        form.reset();
+        document.querySelector('input[name="data"]').value = new Date().toISOString().split('T')[0];
+        document.querySelector('input[name="dataPagamento"]').value = proximaSegunda();
+        carregarLancamentos();
+      } else {
+        alert("Erro ao salvar: " + resp);
+      }
+    })
+    .catch(err => {
+      loading.style.display = 'none';
+      alert("Erro de conexão: " + err);
+    });
+});
+</script>
+
   </script>
 
 </body>
