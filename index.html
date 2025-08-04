@@ -172,7 +172,7 @@
   </table>
 
   <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbwfhOl8P0qz0INfxXBdrGBHmuhmPaHAgGFEbigUoNJ6X3uGbMHZ6gM3wnla1K4Y7mhApQ/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbwgRLUx2ojKDIE7N3tpVad4hwrcM8oP6LAqskgKXsBvNHJszhqUIB6yH5jPcbPNBCbfww/exec';
     const form = document.getElementById('form');
     const filtroStatus = document.getElementById('filtroStatus');
     let profissionais = [], dadosLancamentos = [];
@@ -263,7 +263,65 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+ form.addEventListener('submit', e => {
+  e.preventDefault();
+  const btn = form.querySelector('button[type="submit"]');
+  const loading = document.getElementById('loading-screen');
+  const msg = document.getElementById('loading-message');
 
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+  msg.textContent = 'Salvando dados...';
+  loading.style.display = 'flex';
+
+  const dados = Object.fromEntries(new FormData(form));
+  dados.acao = 'adicionar';
+  dados.cpf = dados.cpfCnpj;
+
+  // Formata a dataPagamento no formato DD/MM/AAAA
+  if (dados.dataPagamento) {
+    const [ano, mes, dia] = dados.dataPagamento.split('-');
+    dados.dataPagamento = `${dia}/${mes}/${ano}`;
+  }
+
+  fetch(URL, {
+    method: 'POST',
+    body: JSON.stringify(dados)
+  }).then(() => {
+    form.reset();
+    filtroStatus.value = 'PENDENTE';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'Salvar';
+      loading.style.display = 'none';
+      carregarLancamentos();
+    }, 1500);
+  });
+});
+
+
+
+// formata a dataPagamento no formato DD/MM/AAAA
+if (dados.dataPagamento) {
+  const [ano, mes, dia] = dados.dataPagamento.split('-');
+  dados.dataPagamento = `${dia}/${mes}/${ano}`;
+}
+
+
+      fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify(dados)
+      }).then(() => {
+        form.reset();
+        filtroStatus.value = 'PENDENTE';
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = 'Salvar';
+          loading.style.display = 'none';
+          carregarLancamentos();
+        }, 1500);
+      });
+    });
 
     filtroStatus.addEventListener('change', carregarLancamentos);
 
@@ -279,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
           tr.setAttribute('data-index', item.index);
           tr.className = item.status.toLowerCase();
          tr.innerHTML = `
-  <td>${formatarData(item.data)}</td>
+  <td>${item.data?.split('T')[0] || ''}</td>
   <td>${item.profissional}</td>
   <td>${item.funcao || ''}</td>
   <td>${item.pix || ''}</td>
@@ -375,7 +433,9 @@ document.addEventListener('DOMContentLoaded', () => {
         carregarLancamentos();
       }, 2000);
     });
+  </script>
 
+  <script>
     const cpfCnpjInput = document.getElementById("cpfCnpj");
 
     cpfCnpjInput.addEventListener("input", () => {
@@ -442,44 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
     });
+  </script>
 
-    <script>
-form.addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  const formData = new FormData(form);
-  const dados = {};
-  formData.forEach((valor, chave) => dados[chave] = valor);
-  dados.acao = 'adicionar';
-
-  const loading = document.getElementById('loading-screen');
-  const msg = document.getElementById('loading-message');
-
-  msg.textContent = 'Salvando...';
-  loading.style.display = 'flex';
-
-  fetch(URL, {
-    method: 'POST',
-    body: JSON.stringify(dados)
-  })
-    .then(res => res.text())
-    .then(resp => {
-      loading.style.display = 'none';
-      if (resp.trim() === 'OK') {
-        alert("Registro salvo com sucesso!");
-        form.reset();
-        document.querySelector('input[name="data"]').value = new Date().toISOString().split('T')[0];
-        document.querySelector('input[name="dataPagamento"]').value = proximaSegunda();
-        carregarLancamentos();
-      } else {
-        alert("Erro ao salvar: " + resp);
-      }
-    })
-    .catch(err => {
-      loading.style.display = 'none';
-      alert("Erro de conexão: " + err);
-    });
-});
-</script>
 </body>
 </html>
