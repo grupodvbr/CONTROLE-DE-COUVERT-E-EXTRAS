@@ -165,8 +165,7 @@
 
   <table id="tabela">
     <thead>
-     <tr><th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>CPF</th><th>Tempo</th><th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th><th>Data Pagamento</th><th>Status</th><th>Ações</th></tr>
-
+      <tr><th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th><th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th><th>Data Pagamento</th><th>Status</th><th>Ações</th></tr>
     </thead>
     <tbody></tbody>
   </table>
@@ -263,49 +262,22 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
- form.addEventListener('submit', e => {
-  e.preventDefault();
-  const btn = form.querySelector('button[type="submit"]');
-  const loading = document.getElementById('loading-screen');
-  const msg = document.getElementById('loading-message');
-
-  btn.disabled = true;
-  btn.textContent = 'Salvando...';
-  msg.textContent = 'Salvando dados...';
-  loading.style.display = 'flex';
-
-  const dados = Object.fromEntries(new FormData(form));
-  dados.acao = 'adicionar';
-  dados.cpf = dados.cpfCnpj;
-
-  // Formata a dataPagamento no formato DD/MM/AAAA
-  if (dados.dataPagamento) {
-    const [ano, mes, dia] = dados.dataPagamento.split('-');
-    dados.dataPagamento = `${dia}/${mes}/${ano}`;
-  }
-
-  fetch(URL, {
-    method: 'POST',
-    body: JSON.stringify(dados)
-  }).then(() => {
-    form.reset();
-    filtroStatus.value = 'PENDENTE';
-    setTimeout(() => {
-      btn.disabled = false;
-      btn.textContent = 'Salvar';
-      loading.style.display = 'none';
-      carregarLancamentos();
-    }, 1500);
-  });
-});
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      const loading = document.getElementById('loading-screen');
+      const msg = document.getElementById('loading-message');
+      dados.cpf = dados.cpfCnpj; // garante que cpf será enviado ao Apps Script
 
 
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+      msg.textContent = 'Salvando dados...';
+      loading.style.display = 'flex';
 
-// formata a dataPagamento no formato DD/MM/AAAA
-if (dados.dataPagamento) {
-  const [ano, mes, dia] = dados.dataPagamento.split('-');
-  dados.dataPagamento = `${dia}/${mes}/${ano}`;
-}
+      const dados = Object.fromEntries(new FormData(form));
+dados.acao = 'adicionar';
+dados.cpf = dados.cpfCnpj; // <-- ajuste que garante o envio correto do CPF
 
 
       fetch(URL, {
@@ -336,40 +308,30 @@ if (dados.dataPagamento) {
           const tr = document.createElement('tr');
           tr.setAttribute('data-index', item.index);
           tr.className = item.status.toLowerCase();
-         tr.innerHTML = `
-  <td>${item.data?.split('T')[0] || ''}</td>
-  <td>${item.profissional}</td>
-  <td>${item.funcao || ''}</td>
-  <td>${item.pix || ''}</td>
-  <td>${item.titular || ''}</td>
-  <td>${item.cpf || ''}</td>
-  <td>${item.tempo || ''}</td>
-  <td>R$ ${(item.valorAcordado || 0).toFixed(2)}</td>
-  <td>R$ ${(item.bonificacao || 0).toFixed(2)}</td>
-  <td>R$ ${(item.desconto || 0).toFixed(2)}</td>
-  <td>R$ ${(item.valorFinal || 0).toFixed(2)}</td>
- <td>${formatarData(item.dataPagamento)}</td>
-  <td>
-    <select onchange="atualizarStatus(this, ${item.index})">
-      <option value="PENDENTE" ${item.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
-      <option value="LANÇADO" ${item.status === 'LANÇADO' ? 'selected' : ''}>LANÇADO</option>
-      <option value="PAGO" ${item.status === 'PAGO' ? 'selected' : ''}>PAGO</option>
-    </select>
-  </td>
-  <td><div class="actions"><button onclick="excluir(${item.index})">Excluir</button></div></td>`;
-
+          tr.innerHTML = `
+            <td>${item.data?.split('T')[0] || ''}</td>
+            <td>${item.profissional}</td>
+            <td>${item.funcao || ''}</td>
+            <td>${item.pix || ''}</td>
+            <td>${item.titular || ''}</td>
+            <td>${item.tempo || ''}</td>
+            <td>R$ ${(item.valorAcordado || 0).toFixed(2)}</td>
+            <td>R$ ${(item.bonificacao || 0).toFixed(2)}</td>
+            <td>R$ ${(item.desconto || 0).toFixed(2)}</td>
+            <td>R$ ${(item.valorFinal || 0).toFixed(2)}</td>
+            <td>${item.dataPagamento || ''}</td>
+            <td>
+              <select onchange="atualizarStatus(this, ${item.index})">
+                <option value="PENDENTE" ${item.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
+                <option value="LANÇADO" ${item.status === 'LANÇADO' ? 'selected' : ''}>LANÇADO</option>
+                <option value="PAGO" ${item.status === 'PAGO' ? 'selected' : ''}>PAGO</option>
+              </select>
+            </td>
+            <td><div class="actions"><button onclick="excluir(${item.index})">Excluir</button></div></td>`;
           tbody.appendChild(tr);
         });
       });
     }
-    function formatarData(dataISO) {
-  if (!dataISO) return '';
-  const data = new Date(dataISO);
-  const dia = String(data.getDate()).padStart(2, '0');
-  const mes = String(data.getMonth() + 1).padStart(2, '0');
-  const ano = data.getFullYear();
-  return `${dia}/${mes}/${ano}`;
-}
 
     function atualizarStatus(select, index) {
       const status = select.value;
