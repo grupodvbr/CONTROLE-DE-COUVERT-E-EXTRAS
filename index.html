@@ -74,6 +74,7 @@
       padding: 8px;
       border: 1px solid #ddd;
       text-align: left;
+      font-size: 13px;
     }
 
     .pago { background: #c8f7c5; }
@@ -139,7 +140,7 @@
       <label>Filtrar por status:</label>
       <select id="filtroStatus">
         <option value="TODOS">TODOS</option>
-        <option value="PENDENTE">PENDENTE</option>
+        <option value="PENDENTE" selected>PENDENTE</option>
         <option value="LANÇADO">LANÇADO</option>
         <option value="PAGO">PAGO</option>
       </select>
@@ -150,7 +151,19 @@
   <table id="tabela">
     <thead>
       <tr>
-        <th>Profissional</th><th>Data</th><th>Valor Final</th><th>Status</th><th>Ações</th>
+        <th>Data</th>
+        <th>Profissional</th>
+        <th>Função</th>
+        <th>Pix</th>
+        <th>Titular</th>
+        <th>Tempo</th>
+        <th>Valor Acordado</th>
+        <th>Bonificação</th>
+        <th>Desconto</th>
+        <th>Valor Final</th>
+        <th>Data Pagamento</th>
+        <th>Status</th>
+        <th>Ações</th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -181,8 +194,8 @@
       if (p) {
         funcao.value = p.funcao || '';
         dadosPix.value = p.pix || '';
-        valorAcordado.value = p.valor || '';
         titularConta.value = p.titular || '';
+        valorAcordado.value = p.valor || '';
       }
     });
 
@@ -205,6 +218,7 @@
       }).then(() => {
         alert('Salvo com sucesso!');
         form.reset();
+        filtroStatus.value = 'PENDENTE';
         carregarLancamentos();
       });
     });
@@ -218,16 +232,24 @@
           dadosLancamentos = data;
           const tbody = document.querySelector('#tabela tbody');
           tbody.innerHTML = '';
-          const filtro = filtroStatus.value;
+          const filtro = filtroStatus.value || 'PENDENTE';
           data.forEach(item => {
             if (filtro !== 'TODOS' && item.status !== filtro) return;
             const tr = document.createElement('tr');
             tr.className = item.status.toLowerCase();
             const dataFormatada = item.data?.split('T')[0] || '';
             tr.innerHTML = `
-              <td>${item.profissional}</td>
               <td>${dataFormatada}</td>
-              <td>R$ ${parseFloat(item.valorFinal).toFixed(2)}</td>
+              <td>${item.profissional}</td>
+              <td>${item.funcao || ''}</td>
+              <td>${item.pix || ''}</td>
+              <td>${item.titular || ''}</td>
+              <td>${item.tempo || ''}</td>
+              <td>R$ ${(item.valorAcordado || 0).toFixed(2)}</td>
+              <td>R$ ${(item.bonificacao || 0).toFixed(2)}</td>
+              <td>R$ ${(item.desconto || 0).toFixed(2)}</td>
+              <td>R$ ${(item.valorFinal || 0).toFixed(2)}</td>
+              <td>${item.dataPagamento || ''}</td>
               <td>${item.status}</td>
               <td>
                 <div class="actions">
@@ -283,7 +305,10 @@
       });
     }
 
-    window.onload = carregarLancamentos;
+    window.onload = () => {
+      filtroStatus.value = 'PENDENTE';
+      carregarLancamentos();
+    };
   </script>
 </body>
 </html>
