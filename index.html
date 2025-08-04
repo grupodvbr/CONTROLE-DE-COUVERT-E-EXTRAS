@@ -315,7 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>R$ ${(item.bonificacao || 0).toFixed(2)}</td>
             <td>R$ ${(item.desconto || 0).toFixed(2)}</td>
             <td>R$ ${(item.valorFinal || 0).toFixed(2)}</td>
-            <td>${item.dataPagamento || ''}</td>
+            <td>${item.dataPagamento ? new Date(item.dataPagamento).toLocaleDateString('pt-BR') : ''}</td>
+
             <td>
               <select onchange="atualizarStatus(this, ${item.index})">
                 <option value="PENDENTE" ${item.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
