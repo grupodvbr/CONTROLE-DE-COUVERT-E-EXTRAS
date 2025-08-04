@@ -275,9 +275,15 @@ document.addEventListener('DOMContentLoaded', () => {
       msg.textContent = 'Salvando dados...';
       loading.style.display = 'flex';
 
-      const dados = Object.fromEntries(new FormData(form));
+     const dados = Object.fromEntries(new FormData(form));
 dados.acao = 'adicionar';
-dados.cpf = dados.cpfCnpj; // <-- ajuste que garante o envio correto do CPF
+dados.cpf = dados.cpfCnpj;
+
+// formata a dataPagamento no formato DD/MM/AAAA
+if (dados.dataPagamento) {
+  const [ano, mes, dia] = dados.dataPagamento.split('-');
+  dados.dataPagamento = `${dia}/${mes}/${ano}`;
+}
 
 
       fetch(URL, {
