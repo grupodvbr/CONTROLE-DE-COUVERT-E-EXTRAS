@@ -114,6 +114,7 @@
     </div>
     <div><label>Função</label><input type="text" name="funcao" id="funcao"></div>
     <div><label>Dados bancários / Pix</label><input type="text" name="dadosPix" id="dadosPix"></div>
+    <div><label>Titular da Conta</label><input type="text" name="titularConta" id="titularConta"></div>
     <div><label>Tempo</label><input type="text" name="tempo"></div>
     <div><label>Valor acordado (R$)</label><input type="number" name="valorAcordado" id="valorAcordado"></div>
     <div><label>Bonificação (R$)</label><input type="number" name="bonificacao" id="bonificacao"></div>
@@ -181,6 +182,7 @@
         funcao.value = p.funcao || '';
         dadosPix.value = p.pix || '';
         valorAcordado.value = p.valor || '';
+        titularConta.value = p.titular || '';
       }
     });
 
