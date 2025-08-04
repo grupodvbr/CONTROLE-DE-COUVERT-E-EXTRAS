@@ -144,7 +144,11 @@
     <label>CPF ou CNPJ</label>
     <input type="text" name="cpfCnpj" id="cpfCnpj" required placeholder="Digite o número verdadeiro">
   </div>
-  <div><label>Mês</label><input type="text" name="mes" required></div>
+  <div>
+  <label>Mês</label>
+  <select name="mes" id="mes" required></select>
+</div>
+
   <div><label>Data</label><input type="date" name="data" required></div>
   <div><label>Profissional</label><input list="listaProfissionais" name="profissional" id="profissional" required><datalist id="listaProfissionais"></datalist></div>
   <div><label>Função</label><input type="text" name="funcao" id="funcao" required></div>
@@ -195,11 +199,21 @@
     let profissionais = [], dadosLancamentos = [];
 
     document.addEventListener('DOMContentLoaded', () => {
-      const hoje = new Date();
-      const nomesMeses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
-      document.querySelector('input[name="mes"]').value = `${nomesMeses[hoje.getMonth()].charAt(0).toUpperCase() + nomesMeses[hoje.getMonth()].slice(1)} de ${hoje.getFullYear()}`;
-      document.querySelector('input[name="data"]').value = hoje.toISOString().split('T')[0];
-    });
+  const hoje = new Date();
+  const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const selectMes = document.getElementById('mes');
+
+  for (let i = 0; i < 12; i++) {
+    const option = document.createElement('option');
+    option.value = `${nomesMeses[i]} de ${hoje.getFullYear()}`;
+    option.textContent = `${nomesMeses[i]} de ${hoje.getFullYear()}`;
+    if (i === hoje.getMonth()) option.selected = true;
+    selectMes.appendChild(option);
+  }
+
+  document.querySelector('input[name="data"]').value = hoje.toISOString().split('T')[0];
+});
+
 
     fetch(`${URL}?acao=profissionais`).then(res => res.json()).then(data => {
       profissionais = data;
