@@ -91,6 +91,7 @@
     .pendente { background: #f7c5c5; }
     .lancado { background: #fdf4c5; }
     .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
     #filtros {
       display: flex;
       justify-content: space-between;
@@ -98,6 +99,26 @@
       padding: 0 20px 10px;
       gap: 10px;
     }
+
+    #filtros select {
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    #filtros button {
+      width: auto;
+      padding: 8px 16px;
+      background: #2c3e50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    #filtros button:hover {
+      background: #34495e;
+    }
+
     @media (max-width: 768px) {
       #filtros {
         flex-direction: column;
@@ -108,7 +129,7 @@
 </head>
 <body>
 
-  <!-- TELA DE CARREGAMENTO -->
+  <!-- Tela de carregamento -->
   <div id="loading-screen">
     <img src="https://static.wixstatic.com/media/d830b0_8cec50a98bbf4775814dbfa5386585e8~mv2.png" alt="Logo">
     <p id="loading-message">Carregando...</p>
@@ -116,7 +137,7 @@
 
   <header>
     <img src="https://static.wixstatic.com/media/d830b0_8cec50a98bbf4775814dbfa5386585e8~mv2.png" alt="Logo">
-    <h1>PAINEL DE EXTRAS E COUVERT- DELÍCIA GOURMET</h1>
+    <h1>Painel Couvert</h1>
   </header>
 
   <form id="form">
@@ -139,7 +160,9 @@
         <option value="PAGO">PAGO</option>
       </select>
     </div>
-    <div style="grid-column: span 3;"><button type="submit">Salvar</button></div>
+    <div style="grid-column: span 3;">
+      <button type="submit">Salvar</button>
+    </div>
   </form>
 
   <div id="filtros">
@@ -156,12 +179,14 @@
   </div>
 
   <table id="tabela">
-    <thead><tr><th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th><th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th><th>Data Pagamento</th><th>Status</th><th>Ações</th></tr></thead>
+    <thead>
+      <tr><th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th><th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th><th>Data Pagamento</th><th>Status</th><th>Ações</th></tr>
+    </thead>
     <tbody></tbody>
   </table>
 
   <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbzM4GeHc00Nto6kv5rDfrmLepW1t_pjvaqND8zqOlOEXwH2N7-Hxwl99kjI1R9zb7CJ/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbyUghvcMJlE5I0xmGzwBp9KpWLu9htIsNh3ixW_ghCS9aH8oKyC9nRbOVjhD1YeiqZj9Q/exec';
     const form = document.getElementById('form');
     const filtroStatus = document.getElementById('filtroStatus');
     let profissionais = [], dadosLancamentos = [];
@@ -204,16 +229,31 @@
 
     form.addEventListener('submit', e => {
       e.preventDefault();
+
+      const btn = form.querySelector('button[type="submit"]');
+      const loading = document.getElementById('loading-screen');
+      const msg = document.getElementById('loading-message');
+
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+      msg.textContent = 'Salvando dados...';
+      loading.style.display = 'flex';
+
       const dados = Object.fromEntries(new FormData(form));
       dados.acao = 'adicionar';
+
       fetch(URL, {
         method: 'POST',
         body: JSON.stringify(dados)
       }).then(() => {
-        alert('Salvo com sucesso!');
         form.reset();
         filtroStatus.value = 'PENDENTE';
-        carregarLancamentos();
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = 'Salvar';
+          loading.style.display = 'none';
+          carregarLancamentos();
+        }, 1500);
       });
     });
 
@@ -275,7 +315,7 @@
 
     function excluir(index) {
       const senha = prompt("Digite a senha para excluir:");
-      if (senha === '1549') {
+      if (senha === '1234') {
         fetch(URL, {
           method: 'POST',
           body: JSON.stringify({ acao: 'excluir', index })
@@ -319,6 +359,5 @@
       }, 2000);
     });
   </script>
-
 </body>
 </html>
