@@ -264,12 +264,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 
-// formata a dataPagamento no formato DD/MM/AAAA
-if (dados.dataPagamento) {
-  const [ano, mes, dia] = dados.dataPagamento.split('-');
-  dados.dataPagamento = `${dia}/${mes}/${ano}`;
-}
-
 
       fetch(URL, {
         method: 'POST',
