@@ -88,53 +88,37 @@
     button:hover {
       background: #34495e;
     }
-    table {
-      width: calc(100% - 40px);
-      margin: 0 20px 20px;
-      border-collapse: collapse;
-      background: white;
-    }
-    th, td {
-      padding: 8px;
-      border: 1px solid #ddd;
-      text-align: left;
-      font-size: 13px;
-    }
-    .pago { background: #c8f7c5; }
-    .pendente { background: #f7c5c5; }
-    .lancado { background: #fdf4c5; }
-    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-    #filtros {
+    .cpf-cnpj-group {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 20px 10px;
-      gap: 10px;
+      flex-direction: column;
     }
-    #filtros select {
-      padding: 8px;
-      font-size: 14px;
-    }
-    #filtros button {
-      width: auto;
-      padding: 8px 16px;
-      background: #2c3e50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    #filtros button:hover {
-      background: #34495e;
-    }
-    @media (max-width: 768px) {
-      #filtros {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    .cpf-cnpj-group label {
+      margin-bottom: 4px;
     }
   </style>
+  <script>
+    function aplicarMascaraCpfCnpj(valor) {
+      valor = valor.replace(/\D/g, '');
+      if (valor.length <= 11) {
+        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+        valor = valor.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+      } else {
+        valor = valor.replace(/(\d{2})(\d)/, '$1.$2');
+        valor = valor.replace(/(\d{3})(\d)/, '$1.$2');
+        valor = valor.replace(/(\d{3})(\d)/, '$1/$2');
+        valor = valor.replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+      }
+      return valor;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const cpfCnpjInput = document.getElementById('cpfCnpj');
+      cpfCnpjInput.addEventListener('input', () => {
+        cpfCnpjInput.value = aplicarMascaraCpfCnpj(cpfCnpjInput.value);
+      });
+    });
+  </script>
 </head>
 <body>
   <div id="loading-screen">
@@ -150,6 +134,10 @@
     <div><label>Mês</label><input type="text" name="mes" required></div>
     <div><label>Data</label><input type="date" name="data" required></div>
     <div><label>Profissional</label><input list="listaProfissionais" name="profissional" id="profissional" required><datalist id="listaProfissionais"></datalist></div>
+    <div class="cpf-cnpj-group">
+      <label>CPF ou CNPJ</label>
+      <input type="text" name="cpfCnpj" id="cpfCnpj" placeholder="Digite o CPF ou CNPJ" required>
+    </div>
     <div><label>Função</label><input type="text" name="funcao" id="funcao"></div>
     <div><label>Dados bancários / Pix</label><input type="text" name="dadosPix" id="dadosPix"></div>
     <div><label>Titular da Conta</label><input type="text" name="titularConta" id="titularConta"></div>
@@ -164,7 +152,6 @@
         <option value="PENDENTE">PENDENTE</option>
         <option value="LANÇADO">LANÇADO</option>
         <option value="PAGO">PAGO</option>
-      </select>
     </div>
     <div style="grid-column: span 3;"><button type="submit">Salvar</button></div>
   </form>
