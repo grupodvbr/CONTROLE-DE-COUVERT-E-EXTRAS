@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Painel Couvert</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      background: white;
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    button {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #222;
+    }
+  </style>
+</head>
+<body>
+  <h1>Controle de Couvert</h1>
+  <form id="couvertForm">
+    <label>Mês</label>
+    <input type="month" name="mes" required>
+
+    <label>Data</label>
+    <input type="date" name="data" required>
+
+    <label>Profissional</label>
+    <input type="text" name="profissional" required>
+
+    <label>Função</label>
+    <input type="text" name="funcao">
+
+    <label>Dados bancários / Pix</label>
+    <input type="text" name="dadosPix">
+
+    <label>Tempo</label>
+    <input type="text" name="tempo">
+
+    <label>Valor acordado</label>
+    <input type="number" step="0.01" name="valorAcordado">
+
+    <label>Bonificação</label>
+    <input type="number" step="0.01" name="bonificacao">
+
+    <label>Desconto de Consumo</label>
+    <input type="number" step="0.01" name="desconto">
+
+    <label>Valor</label>
+    <input type="number" step="0.01" name="valorFinal">
+
+    <label>Data pagamento</label>
+    <input type="date" name="dataPagamento">
+
+    <label>Status</label>
+    <select name="status">
+      <option value="PENDENTE">PENDENTE</option>
+      <option value="PAGO">PAGO</option>
+    </select>
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxrcFu45RqxCpa16PAzjIjgDYMbTyaLCre2aVkfuurK4ICn0aqu2vj-zptuywXHNOq--A/exec';
+    const form = document.getElementById('couvertForm');
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = {};
+      formData.forEach((value, key) => data[key] = value);
+      fetch(scriptURL, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => alert("Registro enviado com sucesso!"))
+      .catch(error => alert("Erro ao enviar. Tente novamente."));
+      form.reset();
+    });
+  </script>
+</body>
+</html>
