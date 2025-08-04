@@ -165,7 +165,13 @@
 
   <table id="tabela">
     <thead>
-      <tr><th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th><th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th><th>Data Pagamento</th><th>Status</th><th>Ações</th></tr>
+     <tr>
+  <th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th>
+  <th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th>
+  <th>Data Pagamento</th><th><strong>CPF</strong></th>
+  <th>Status</th><th>Ações</th>
+</tr>
+
     </thead>
     <tbody></tbody>
   </table>
@@ -316,6 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <td>R$ ${(item.desconto || 0).toFixed(2)}</td>
             <td>R$ ${(item.valorFinal || 0).toFixed(2)}</td>
             <td>${item.dataPagamento ? new Date(item.dataPagamento).toLocaleDateString('pt-BR') : ''}</td>
+            <td>${item.cpf || ''}</td>
 
             <td>
               <select onchange="atualizarStatus(this, ${item.index})">
