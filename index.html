@@ -1,3 +1,4 @@
+<!-- Painel Couvert com Autocomplete Profissional -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,8 +8,7 @@
   <style>
     body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
     header { display: flex; align-items: center; padding: 10px 20px; background: white; border-bottom: 1px solid #ccc; }
-    header img { height: 40px; margin-right: 10px; }
-    header h1 { font-size: 1.5em; color: #222; }
+    header h1 { font-size: 1.5em; color: #222; margin: 0; }
 
     form, .table-container {
       max-width: 900px;
@@ -21,245 +21,99 @@
 
     label { display: block; margin-top: 12px; font-weight: bold; }
     input, select {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      width: 100%; padding: 10px; margin-top: 5px;
+      border-radius: 5px; border: 1px solid #ccc;
     }
-
-    input[readonly] {
-      background: #eee;
-      font-weight: bold;
-    }
-
+    input[readonly] { background: #eee; font-weight: bold; }
     button {
-      margin-top: 20px;
-      padding: 12px 20px;
-      background-color: #1a237e;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: bold;
-      cursor: pointer;
+      margin-top: 20px; padding: 12px 20px;
+      background-color: #1a237e; color: white; border: none;
+      border-radius: 6px; font-weight: bold; cursor: pointer;
     }
 
-    button:hover { background-color: #0d155d; }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-    }
-
-    th, td {
-      padding: 10px;
-      text-align: center;
-      border: 1px solid #ccc;
-    }
-
-    th {
-      background: #1a237e;
-      color: white;
-    }
-
-    .btn-status, .btn-excluir {
-      padding: 5px 10px;
-      font-size: 0.8em;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .btn-status { background: orange; color: white; }
-    .btn-excluir { background: red; color: white; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; text-align: center; border: 1px solid #ccc; }
+    th { background: #1a237e; color: white; }
   </style>
 </head>
 <body>
+  <header>
+    <h1>Controle de Couvert</h1>
+  </header>
 
-<header>
-  <img src="logo.png" alt="Logo CB Systems">
-  <h1>Controle de Couvert</h1>
-</header>
+  <form id="couvertForm">
+    <label>Mês</label><input type="month" name="mes" required>
+    <label>Data</label><input type="date" name="data" required>
 
-<form id="couvertForm">
-  <label>Mês</label><input type="month" name="mes" required>
-  <label>Data</label><input type="date" name="data" required>
+    <label>Profissional</label>
+    <input type="text" name="profissional" id="profissional" list="listaProfissionais" autocomplete="off" required>
+    <datalist id="listaProfissionais"></datalist>
 
-  <label>Profissional</label>
-  <input type="text" name="profissional" id="profissional" list="listaProfissionais" autocomplete="off" required>
-  <datalist id="listaProfissionais"></datalist>
+    <label>Função</label><input type="text" name="funcao">
+    <label>Dados bancários / Pix</label><input type="text" name="dadosPix">
+    <label>Tempo</label><input type="text" name="tempo">
+    <label>Valor acordado</label><input type="number" step="0.01" name="valorAcordado" id="valorAcordado" required>
+    <label>Bonificação</label><input type="number" step="0.01" name="bonificacao" id="bonificacao">
+    <label>Desconto de Consumo</label><input type="number" step="0.01" name="desconto" id="desconto">
+    <label>Valor (automático)</label><input type="text" name="valorFinal" id="valorFinal" readonly>
+    <label>Data pagamento</label><input type="date" name="dataPagamento">
+    <label>Status</label>
+    <select name="status">
+      <option value="PENDENTE">PENDENTE</option>
+      <option value="PAGO">PAGO</option>
+    </select>
+    <button type="submit">Cadastrar</button>
+  </form>
 
-  <label>Função</label><input type="text" name="funcao">
-  <label>Dados bancários / Pix</label><input type="text" name="dadosPix">
-  <label>Tempo</label><input type="text" name="tempo">
-  <label>Valor acordado</label><input type="number" step="0.01" name="valorAcordado" id="valorAcordado" required>
-  <label>Bonificação</label><input type="number" step="0.01" name="bonificacao" id="bonificacao">
-  <label>Desconto de Consumo</label><input type="number" step="0.01" name="desconto" id="desconto">
-  <label>Valor (automático)</label><input type="text" name="valorFinal" id="valorFinal" readonly>
-  <label>Data pagamento</label><input type="date" name="dataPagamento">
-  <label>Status</label>
-  <select name="status">
-    <option value="PENDENTE">PENDENTE</option>
-    <option value="PAGO">PAGO</option>
-  </select>
-  <button type="submit">Cadastrar</button>
-</form>
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbykt2hycm_dp9U4TG4sr47z_d2Z9YuL_dLQ4tS_GcEFZxZ269eRF7zCghMWnU4kJMNUMA/exec';
 
-<div class="table-container">
-  <h2>Lançamentos Registrados</h2>
-  <table id="tabelaCouvert">
-    <thead>
-      <tr>
-        <th>Profissional</th>
-        <th>Data</th>
-        <th>Valor</th>
-        <th>Status</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-</div>
-
-<script>
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbxgRM60nkFIJ8C-itktSePSWDFmT7_OSPTceS7Mb-lLjVHL-S6GFlc_vl5V5oapFPqptA/exec';
-  const senhaExclusao = '1234';
-
-  const valorAcordado = document.getElementById('valorAcordado');
-  const bonificacao = document.getElementById('bonificacao');
-  const desconto = document.getElementById('desconto');
-  const valorFinal = document.getElementById('valorFinal');
-  const form = document.getElementById('couvertForm');
-  const botao = form.querySelector('button[type="submit"]');
-
-  function formatarReal(valor) {
-    return `R$ ${Number(valor).toFixed(2).replace('.', ',')}`;
-  }
-
-  function atualizarValorFinal() {
-    const v1 = parseFloat(valorAcordado.value) || 0;
-    const v2 = parseFloat(bonificacao.value) || 0;
-    const v3 = parseFloat(desconto.value) || 0;
-    const resultado = v1 - v2 - v3;
-    valorFinal.value = formatarReal(resultado);
-    valorFinal.dataset.valorNumerico = resultado.toFixed(2);
-  }
-
-  [valorAcordado, bonificacao, desconto].forEach(el => el.addEventListener('input', atualizarValorFinal));
-  atualizarValorFinal();
-
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    botao.disabled = true;
-    botao.innerText = 'Processando...';
-
-    const formData = new FormData(form);
-    const data = {};
-    formData.forEach((value, key) => {
-      data[key] = key === 'valorFinal'
-        ? document.getElementById('valorFinal').dataset.valorNumerico || "0"
-        : value;
-    });
-    data.acao = 'adicionar';
-
-    try {
-      const resposta = await fetch(scriptURL, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      if (resposta.ok) {
-        alert("✅ Registro salvo com sucesso!");
-        form.reset();
-        atualizarValorFinal();
-        carregarLancamentos();
-      } else {
-        alert("❌ Erro ao salvar. Verifique a planilha ou script.");
+    async function carregarProfissionais() {
+      try {
+        const res = await fetch(scriptURL + '?acao=profissionais');
+        const lista = await res.json();
+        const datalist = document.getElementById('listaProfissionais');
+        datalist.innerHTML = '';
+        lista.forEach(p => {
+          const option = document.createElement('option');
+          option.value = p.nome;
+          datalist.appendChild(option);
+        });
+        document.getElementById('profissional').addEventListener('input', e => {
+          const selecionado = lista.find(p => p.nome.toLowerCase() === e.target.value.toLowerCase());
+          if (selecionado) {
+            document.querySelector('[name="funcao"]').value = selecionado.funcao;
+            document.querySelector('[name="dadosPix"]').value = selecionado.pix;
+            document.querySelector('[name="valorAcordado"]').value = selecionado.valor;
+            atualizarValorFinal();
+          }
+        });
+      } catch (e) {
+        console.error('Erro ao carregar profissionais:', e);
       }
-    } catch (erro) {
-      alert("❌ Erro de conexão. Tente novamente.");
-      console.error(erro);
     }
 
-    botao.disabled = false;
-    botao.innerText = 'Cadastrar';
-  });
+    const valorAcordado = document.getElementById('valorAcordado');
+    const bonificacao = document.getElementById('bonificacao');
+    const desconto = document.getElementById('desconto');
+    const valorFinal = document.getElementById('valorFinal');
 
-  async function carregarLancamentos() {
-    try {
-      const res = await fetch(scriptURL + '?acao=ler');
-      const data = await res.json();
-      const tbody = document.querySelector('#tabelaCouvert tbody');
-      tbody.innerHTML = '';
-      data.forEach((item, i) => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${item.profissional}</td>
-          <td>${item.data}</td>
-          <td>${formatarReal(item.valorFinal)}</td>
-          <td>${item.status}</td>
-          <td>
-            <button class="btn-status" onclick="alterarStatus(${i})">Alterar</button>
-            <button class="btn-excluir" onclick="excluir(${i})">Excluir</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    } catch (e) {
-      console.error('Erro ao carregar lançamentos:', e);
+    function formatarReal(valor) {
+      return `R$ ${Number(valor).toFixed(2).replace('.', ',')}`;
     }
-  }
 
-  async function alterarStatus(index) {
-    await fetch(scriptURL, {
-      method: 'POST',
-      body: JSON.stringify({ acao: 'status', index }),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    carregarLancamentos();
-  }
-
-  async function excluir(index) {
-    const senha = prompt("Digite a senha para excluir:");
-    if (senha !== senhaExclusao) return alert("Senha incorreta!");
-    await fetch(scriptURL, {
-      method: 'POST',
-      body: JSON.stringify({ acao: 'excluir', index }),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    carregarLancamentos();
-  }
-
-  async function carregarProfissionais() {
-    try {
-      const res = await fetch(scriptURL + '?acao=profissionais');
-      const lista = await res.json();
-      const datalist = document.getElementById('listaProfissionais');
-      datalist.innerHTML = '';
-      lista.forEach(p => {
-        const option = document.createElement('option');
-        option.value = p.nome;
-        datalist.appendChild(option);
-      });
-
-      document.getElementById('profissional').addEventListener('change', e => {
-        const selecionado = lista.find(p => p.nome === e.target.value);
-        if (selecionado) {
-          document.querySelector('[name="funcao"]').value = selecionado.funcao;
-          document.querySelector('[name="dadosPix"]').value = selecionado.pix;
-          document.querySelector('[name="valorAcordado"]').value = selecionado.valor;
-          atualizarValorFinal();
-        }
-      });
-    } catch (e) {
-      console.error("Erro ao carregar profissionais:", e);
+    function atualizarValorFinal() {
+      const v1 = parseFloat(valorAcordado.value) || 0;
+      const v2 = parseFloat(bonificacao.value) || 0;
+      const v3 = parseFloat(desconto.value) || 0;
+      const resultado = v1 - v2 - v3;
+      valorFinal.value = formatarReal(resultado);
     }
-  }
 
-  carregarLancamentos();
-  carregarProfissionais();
-</script>
+    [valorAcordado, bonificacao, desconto].forEach(el => el.addEventListener('input', atualizarValorFinal));
 
+    carregarProfissionais();
+    atualizarValorFinal();
+  </script>
 </body>
 </html>
