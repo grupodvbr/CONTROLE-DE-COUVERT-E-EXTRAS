@@ -110,114 +110,140 @@
   </table>
 
   <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbxcQy_eF_kNRKU_xu0vVeFqP5PY8ukBO0YsFNpSE-duCUCRgBexBr0SD9bpTaC_N0ogjg/exec';
+  const URL = 'https://script.google.com/macros/s/AKfycbxcQy_eF_kNRKU_xu0vVeFqP5PY8ukBO0YsFNpSE-duCUCRgBexBr0SD9bpTaC_N0ogjg/exec';
 
-    const form = document.getElementById('form');
-    const profissionalInput = document.getElementById('profissional');
-    const funcaoInput = document.getElementById('funcao');
-    const dadosPixInput = document.getElementById('dadosPix');
-    const valorAcordadoInput = document.getElementById('valorAcordado');
-    const bonificacaoInput = document.getElementById('bonificacao');
-    const descontoInput = document.getElementById('desconto');
-    const valorFinalInput = document.getElementById('valorFinal');
+  const form = document.getElementById('form');
+  const profissionalInput = document.getElementById('profissional');
+  const funcaoInput = document.getElementById('funcao');
+  const dadosPixInput = document.getElementById('dadosPix');
+  const valorAcordadoInput = document.getElementById('valorAcordado');
+  const bonificacaoInput = document.getElementById('bonificacao');
+  const descontoInput = document.getElementById('desconto');
+  const valorFinalInput = document.getElementById('valorFinal');
 
-    let profissionais = [];
+  let profissionais = [];
 
-    // === Carregar profissionais ===
-    fetch(`${URL}?acao=profissionais`)
+  // === Carregar profissionais ===
+  fetch(`${URL}?acao=profissionais`)
+    .then(res => res.json())
+    .then(data => {
+      profissionais = data;
+      const lista = document.getElementById('listaProfissionais');
+      lista.innerHTML = '';
+      data.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.nome;
+        lista.appendChild(opt);
+      });
+    });
+
+  profissionalInput.addEventListener('input', () => {
+    const p = profissionais.find(p => p.nome === profissionalInput.value);
+    if (p) {
+      funcaoInput.value = p.funcao || '';
+      dadosPixInput.value = p.pix || '';
+      valorAcordadoInput.value = p.valor || '';
+    }
+  });
+
+  // === Cálculo automático ===
+  [valorAcordadoInput, bonificacaoInput, descontoInput].forEach(input => {
+    input.addEventListener('input', () => {
+      const v = parseFloat(valorAcordadoInput.value) || 0;
+      const b = parseFloat(bonificacaoInput.value) || 0;
+      const d = parseFloat(descontoInput.value) || 0;
+      valorFinalInput.value = (v - b - d).toFixed(2);
+    });
+  });
+
+  // === Submeter formulário ===
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const dados = Object.fromEntries(new FormData(form));
+    dados.acao = 'adicionar';
+    fetch(URL, {
+      method: 'POST',
+      body: JSON.stringify(dados)
+    }).then(res => res.text())
+      .then(() => {
+        alert('Salvo com sucesso!');
+        form.reset();
+        carregarLancamentos();
+      });
+  });
+
+  // === Carregar lançamentos ===
+  function carregarLancamentos() {
+    fetch(`${URL}?acao=ler`)
       .then(res => res.json())
       .then(data => {
-        profissionais = data;
-        const lista = document.getElementById('listaProfissionais');
-        lista.innerHTML = '';
-        data.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.nome;
-          lista.appendChild(opt);
+        const tbody = document.querySelector('#tabela tbody');
+        tbody.innerHTML = '';
+        data.forEach((item, i) => {
+          const tr = document.createElement('tr');
+          tr.className = item.status === 'PAGO' ? 'pago' : 'pendente';
+          const dataFormatada = item.data?.split('T')[0] || '';
+          tr.innerHTML = `
+            <td>${item.profissional}</td>
+            <td>${dataFormatada}</td>
+            <td>R$ ${parseFloat(item.valorFinal).toFixed(2)}</td>
+            <td>${item.status}</td>
+            <td>
+              <div style="display: flex; gap: 8px;">
+                <button style="
+                  flex:1;
+                  background-color: #2c3e50;
+                  color: white;
+                  border: none;
+                  padding: 6px 10px;
+                  border-radius: 4px;
+                  cursor: pointer;
+                " onclick="alterarStatus(${item.index})">Status</button>
+
+                <button style="
+                  flex:1;
+                  background-color: #2c3e50;
+                  color: white;
+                  border: none;
+                  padding: 6px 10px;
+                  border-radius: 4px;
+                  cursor: pointer;
+                " onclick="excluir(${item.index})">Excluir</button>
+              </div>
+            </td>`;
+          tbody.appendChild(tr);
         });
       });
+  }
 
-    profissionalInput.addEventListener('input', () => {
-      const p = profissionais.find(p => p.nome === profissionalInput.value);
-      if (p) {
-        funcaoInput.value = p.funcao || '';
-        dadosPixInput.value = p.pix || '';
-        valorAcordadoInput.value = p.valor || '';
-      }
-    });
+  function alterarStatus(index) {
+    fetch(URL, {
+      method: 'POST',
+      body: JSON.stringify({ acao: 'status', index })
+    }).then(() => carregarLancamentos());
+  }
 
-    [valorAcordadoInput, bonificacaoInput, descontoInput].forEach(input => {
-      input.addEventListener('input', () => {
-        const v = parseFloat(valorAcordadoInput.value) || 0;
-        const b = parseFloat(bonificacaoInput.value) || 0;
-        const d = parseFloat(descontoInput.value) || 0;
-        valorFinalInput.value = (v - b - d).toFixed(2);
-      });
-    });
-
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      const dados = Object.fromEntries(new FormData(form));
-      dados.acao = 'adicionar';
+  function excluir(index) {
+    const senha = prompt("Digite a senha para excluir:");
+    if (senha === '1234') {
       fetch(URL, {
         method: 'POST',
-        body: JSON.stringify(dados)
-      }).then(res => res.text())
-        .then(() => {
-          alert('Salvo com sucesso!');
-          form.reset();
-          carregarLancamentos();
-        });
-    });
-
-    function carregarLancamentos() {
-      fetch(`${URL}?acao=ler`)
-        .then(res => res.json())
-        .then(data => {
-          const tbody = document.querySelector('#tabela tbody');
-          tbody.innerHTML = '';
-          data.forEach((item, i) => {
-            const tr = document.createElement('tr');
-            tr.className = item.status === 'PAGO' ? 'pago' : 'pendente';
-            tr.innerHTML = `
-              <td>${item.profissional}</td>
-              <td>${item.data}</td>
-              <td>R$ ${parseFloat(item.valorFinal).toFixed(2)}</td>
-              <td>${item.status}</td>
-              <td>
-                <button onclick="alterarStatus(${item.index})">Status</button>
-                <button onclick="excluir(${item.index})">Excluir</button>
-              </td>`;
-            tbody.appendChild(tr);
-          });
-        });
-    }
-
-    function alterarStatus(index) {
-      fetch(URL, {
-        method: 'POST',
-        body: JSON.stringify({ acao: 'status', index })
+        body: JSON.stringify({ acao: 'excluir', index })
       }).then(() => carregarLancamentos());
+    } else {
+      alert("Senha incorreta.");
     }
+  }
 
-    function excluir(index) {
-      const senha = prompt("Digite a senha para excluir:");
-      if (senha === '1234') {
-        fetch(URL, {
-          method: 'POST',
-          body: JSON.stringify({ acao: 'excluir', index })
-        }).then(() => carregarLancamentos());
-      } else {
-        alert("Senha incorreta.");
-      }
-    }
+  // === Início ===
+  window.onload = () => {
+    setTimeout(() => {
+      const loader = document.getElementById('loader');
+      if (loader) loader.style.display = 'none';
+    }, 2500); // delay de tela inicial
 
-    window.onload = () => {
-      setTimeout(() => {
-        document.getElementById('loader').style.display = 'none';
-      }, 2500); // 2.5 segundos
-      carregarLancamentos();
-    }
-  </script>
-</body>
+    carregarLancamentos();
+  };
+</script>
+
 </html>
