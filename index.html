@@ -5,7 +5,36 @@
   <title>Painel Couvert</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+
+    #loader {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    #loader img {
+      width: 200px;
+      animation: fadeIn 1.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: scale(0.9); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
     h2 { margin-top: 30px; }
     label { display: block; margin-top: 10px; font-weight: bold; }
     input, select, button {
@@ -22,6 +51,10 @@
   </style>
 </head>
 <body>
+  <div id="loader">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a7/Logo_delicia.png" alt="Logo Grupo DV">
+  </div>
+
   <h1>Painel Couvert</h1>
 
   <form id="form">
@@ -113,7 +146,6 @@
       }
     });
 
-    // === Cálculo automático ===
     [valorAcordadoInput, bonificacaoInput, descontoInput].forEach(input => {
       input.addEventListener('input', () => {
         const v = parseFloat(valorAcordadoInput.value) || 0;
@@ -123,7 +155,6 @@
       });
     });
 
-    // === Submeter formulário ===
     form.addEventListener('submit', e => {
       e.preventDefault();
       const dados = Object.fromEntries(new FormData(form));
@@ -139,7 +170,6 @@
         });
     });
 
-    // === Carregar lançamentos ===
     function carregarLancamentos() {
       fetch(`${URL}?acao=ler`)
         .then(res => res.json())
@@ -152,7 +182,7 @@
             tr.innerHTML = `
               <td>${item.profissional}</td>
               <td>${item.data}</td>
-              <td>R$ ${item.valorFinal.toFixed(2)}</td>
+              <td>R$ ${parseFloat(item.valorFinal).toFixed(2)}</td>
               <td>${item.status}</td>
               <td>
                 <button onclick="alterarStatus(${item.index})">Status</button>
@@ -182,7 +212,12 @@
       }
     }
 
-    carregarLancamentos();
+    window.onload = () => {
+      setTimeout(() => {
+        document.getElementById('loader').style.display = 'none';
+      }, 2500); // 2.5 segundos
+      carregarLancamentos();
+    }
   </script>
 </body>
 </html>
