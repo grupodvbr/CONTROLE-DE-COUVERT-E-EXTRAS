@@ -189,7 +189,7 @@
   </table>
 
   <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbzTJBeVmEKJ4JKJpk7jHsuxmxCROJBYDKeIEDE94BYgIu0ltDSZQkG3s0KMexEiejLXpg/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbwhhv1lGvcc-ZAPN9MKNII7P4ItMCGIq8oYb_YnRuGkxbHiU5XNDKb6hADh_-lLh0J0IA/exec';
     const form = document.getElementById('form');
     const filtroStatus = document.getElementById('filtroStatus');
     let profissionais = [], dadosLancamentos = [];
@@ -217,36 +217,36 @@
       const p = profissionais.find(p => p.nome.trim().toUpperCase() === nomeDigitado);
 
       if (p) {
-        funcao.value = p.funcao || '';
-        dadosPix.value = p.pix || '';
-        titularConta.value = p.titular || '';
-        valorAcordado.value = p.valor || '';
+  funcao.value = p.funcao || '';
+  dadosPix.value = p.pix || '';
+  titularConta.value = p.titular || '';
+  valorAcordado.value = p.valor || '';
+  cpfCnpj.value = p.cpf || ''; // <-- aqui
 
-        funcao.readOnly = true;
-        dadosPix.readOnly = true;
-        titularConta.readOnly = true;
-        valorAcordado.readOnly = false;
+  funcao.readOnly = true;
+  dadosPix.readOnly = true;
+  titularConta.readOnly = true;
+  valorAcordado.readOnly = false;
+  funcao.style.background = '#eee';
+  dadosPix.style.background = '#eee';
+  titularConta.style.background = '#eee';
+  valorAcordado.style.background = '';
+} else {
+  funcao.value = '';
+  dadosPix.value = '';
+  titularConta.value = '';
+  valorAcordado.value = '';
+  cpfCnpj.value = ''; // <-- aqui também
 
-        funcao.style.background = '#eee';
-        dadosPix.style.background = '#eee';
-        titularConta.style.background = '#eee';
-        valorAcordado.style.background = '';
-      } else {
-        funcao.value = '';
-        dadosPix.value = '';
-        titularConta.value = '';
-        valorAcordado.value = '';
-
-        funcao.readOnly = false;
-        dadosPix.readOnly = false;
-        titularConta.readOnly = false;
-        valorAcordado.readOnly = false;
-
-        funcao.style.background = '';
-        dadosPix.style.background = '';
-        titularConta.style.background = '';
-        valorAcordado.style.background = '';
-      }
+  funcao.readOnly = false;
+  dadosPix.readOnly = false;
+  titularConta.readOnly = false;
+  valorAcordado.readOnly = false;
+  funcao.style.background = '';
+  dadosPix.style.background = '';
+  titularConta.style.background = '';
+  valorAcordado.style.background = '';
+}
     });
 
     [valorAcordado, desconto].forEach(input => {
