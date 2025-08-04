@@ -17,6 +17,7 @@
       background: white;
       z-index: 9999;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
     }
@@ -24,8 +25,13 @@
       width: 200px;
       animation: fadeIn 1s ease-in-out;
     }
+    #loading-message {
+      font-size: 18px;
+      margin-top: 20px;
+      color: #333;
+    }
     @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.9); }
+      from { opacity: 0; transform: scale(0.95); }
       to { opacity: 1; transform: scale(1); }
     }
     header {
@@ -101,8 +107,11 @@
   </style>
 </head>
 <body>
+
+  <!-- TELA DE CARREGAMENTO -->
   <div id="loading-screen">
     <img src="https://static.wixstatic.com/media/d830b0_8cec50a98bbf4775814dbfa5386585e8~mv2.png" alt="Logo">
+    <p id="loading-message">Carregando...</p>
   </div>
 
   <header>
@@ -147,13 +156,7 @@
   </div>
 
   <table id="tabela">
-    <thead>
-      <tr>
-        <th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th>
-        <th>Tempo</th><th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th>
-        <th>Valor Final</th><th>Data Pagamento</th><th>Status</th><th>Ações</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th><th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th><th>Data Pagamento</th><th>Status</th><th>Ações</th></tr></thead>
     <tbody></tbody>
   </table>
 
@@ -256,10 +259,18 @@
 
     function atualizarStatus(select, index) {
       const status = select.value;
+      const loading = document.getElementById('loading-screen');
+      const msg = document.getElementById('loading-message');
+
+      msg.textContent = 'Atualizando status...';
+      loading.style.display = 'flex';
+
       fetch(URL, {
         method: 'POST',
         body: JSON.stringify({ acao: 'atualizarStatus', index, status })
-      }).then(() => location.reload());
+      }).then(() => {
+        setTimeout(() => location.reload(), 1500);
+      });
     }
 
     function excluir(index) {
@@ -298,12 +309,16 @@
     }
 
     window.addEventListener('load', () => {
+      const loading = document.getElementById('loading-screen');
+      const msg = document.getElementById('loading-message');
+      msg.textContent = 'Carregando...';
       setTimeout(() => {
-        document.getElementById('loading-screen').style.display = 'none';
+        loading.style.display = 'none';
         filtroStatus.value = 'PENDENTE';
         carregarLancamentos();
       }, 2000);
     });
   </script>
+
 </body>
 </html>
