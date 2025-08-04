@@ -6,13 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * { box-sizing: border-box; }
-
     body {
       font-family: Arial, sans-serif;
       background: #f4f4f4;
       margin: 0;
     }
-
     header {
       display: flex;
       align-items: center;
@@ -20,25 +18,20 @@
       background: white;
       border-bottom: 1px solid #ccc;
     }
-
     header img {
       height: 50px;
       margin-right: 20px;
     }
-
     h1 { font-size: 1.5em; }
-
     form {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       padding: 20px;
     }
-
     label {
       font-weight: bold;
     }
-
     input, select, button {
       width: 100%;
       padding: 8px;
@@ -47,42 +40,34 @@
       border: 1px solid #ccc;
       font-size: 14px;
     }
-
     input[readonly] {
       background: #eee;
     }
-
     button {
       background: #2c3e50;
       color: white;
       border: none;
       cursor: pointer;
     }
-
     button:hover {
       background: #34495e;
     }
-
     table {
       width: calc(100% - 40px);
       margin: 0 20px 20px;
       border-collapse: collapse;
       background: white;
     }
-
     th, td {
       padding: 8px;
       border: 1px solid #ddd;
       text-align: left;
       font-size: 13px;
     }
-
     .pago { background: #c8f7c5; }
     .pendente { background: #f7c5c5; }
     .lancado { background: #fdf4c5; }
-
-    .actions { display: flex; gap: 8px; }
-
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
     #filtros {
       display: flex;
       justify-content: space-between;
@@ -90,7 +75,6 @@
       padding: 0 20px 10px;
       gap: 10px;
     }
-
     @media (max-width: 768px) {
       #filtros {
         flex-direction: column;
@@ -104,15 +88,10 @@
     <img src="https://static.wixstatic.com/media/d830b0_8cec50a98bbf4775814dbfa5386585e8~mv2.png" alt="Logo">
     <h1>Painel Couvert</h1>
   </header>
-
   <form id="form">
-    <div><label>Mês</label><input type="text" name="mes" required placeholder="Agosto de 2025"></div>
+    <div><label>Mês</label><input type="text" name="mes" required></div>
     <div><label>Data</label><input type="date" name="data" required></div>
-    <div>
-      <label>Profissional</label>
-      <input list="listaProfissionais" name="profissional" id="profissional" required>
-      <datalist id="listaProfissionais"></datalist>
-    </div>
+    <div><label>Profissional</label><input list="listaProfissionais" name="profissional" id="profissional" required><datalist id="listaProfissionais"></datalist></div>
     <div><label>Função</label><input type="text" name="funcao" id="funcao"></div>
     <div><label>Dados bancários / Pix</label><input type="text" name="dadosPix" id="dadosPix"></div>
     <div><label>Titular da Conta</label><input type="text" name="titularConta" id="titularConta"></div>
@@ -122,19 +101,15 @@
     <div><label>Desconto de consumo (R$)</label><input type="number" name="desconto" id="desconto"></div>
     <div><label>Valor final (R$)</label><input type="number" name="valorFinal" id="valorFinal" readonly></div>
     <div><label>Data Pagamento</label><input type="date" name="dataPagamento"></div>
-    <div>
-      <label>Status</label>
+    <div><label>Status</label>
       <select name="status">
         <option value="PENDENTE">PENDENTE</option>
         <option value="LANÇADO">LANÇADO</option>
         <option value="PAGO">PAGO</option>
       </select>
     </div>
-    <div style="grid-column: span 3;">
-      <button type="submit">Salvar</button>
-    </div>
+    <div style="grid-column: span 3;"><button type="submit">Salvar</button></div>
   </form>
-
   <div id="filtros">
     <div>
       <label>Filtrar por status:</label>
@@ -147,47 +122,33 @@
     </div>
     <button onclick="liquidarEmMassa()">Liquidar em Massa</button>
   </div>
-
   <table id="tabela">
-    <thead>
-      <tr>
-        <th>Data</th>
-        <th>Profissional</th>
-        <th>Função</th>
-        <th>Pix</th>
-        <th>Titular</th>
-        <th>Tempo</th>
-        <th>Valor Acordado</th>
-        <th>Bonificação</th>
-        <th>Desconto</th>
-        <th>Valor Final</th>
-        <th>Data Pagamento</th>
-        <th>Status</th>
-        <th>Ações</th>
-      </tr>
-    </thead>
+    <thead><tr><th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th><th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th><th>Data Pagamento</th><th>Status</th><th>Ações</th></tr></thead>
     <tbody></tbody>
   </table>
-
   <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbw5F3VrJxTTo4ClHnCe5lmpVmWoFB31BBiR8_k6DNPZo26fXba_LRHLjPNQYjeUGiScAQ/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbwkcNQPRYtTBAFd1mTg-mMx0DpAvwUNS2WXFNF2B9oOfGlYa-FbCftb9Ju4N7Cozxjydw/exec';
     const form = document.getElementById('form');
     const filtroStatus = document.getElementById('filtroStatus');
-    let profissionais = [];
-    let dadosLancamentos = [];
+    let profissionais = [], dadosLancamentos = [];
 
-    fetch(`${URL}?acao=profissionais`)
-      .then(res => res.json())
-      .then(data => {
-        profissionais = data;
-        const lista = document.getElementById('listaProfissionais');
-        lista.innerHTML = '';
-        data.forEach(p => {
-          const opt = document.createElement('option');
-          opt.value = p.nome;
-          lista.appendChild(opt);
-        });
+    document.addEventListener('DOMContentLoaded', () => {
+      const hoje = new Date();
+      const nomesMeses = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+      document.querySelector('input[name="mes"]').value = `${nomesMeses[hoje.getMonth()].charAt(0).toUpperCase() + nomesMeses[hoje.getMonth()].slice(1)} de ${hoje.getFullYear()}`;
+      document.querySelector('input[name="data"]').value = hoje.toISOString().split('T')[0];
+    });
+
+    fetch(`${URL}?acao=profissionais`).then(res => res.json()).then(data => {
+      profissionais = data;
+      const lista = document.getElementById('listaProfissionais');
+      lista.innerHTML = '';
+      data.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.nome;
+        lista.appendChild(opt);
       });
+    });
 
     document.getElementById('profissional').addEventListener('input', () => {
       const p = profissionais.find(p => p.nome === profissional.value);
@@ -226,47 +187,50 @@
     filtroStatus.addEventListener('change', carregarLancamentos);
 
     function carregarLancamentos() {
-      fetch(`${URL}?acao=ler`)
-        .then(res => res.json())
-        .then(data => {
-          dadosLancamentos = data;
-          const tbody = document.querySelector('#tabela tbody');
-          tbody.innerHTML = '';
-          const filtro = filtroStatus.value || 'PENDENTE';
-          data.forEach(item => {
-            if (filtro !== 'TODOS' && item.status !== filtro) return;
-            const tr = document.createElement('tr');
-            tr.className = item.status.toLowerCase();
-            const dataFormatada = item.data?.split('T')[0] || '';
-            tr.innerHTML = `
-              <td>${dataFormatada}</td>
-              <td>${item.profissional}</td>
-              <td>${item.funcao || ''}</td>
-              <td>${item.pix || ''}</td>
-              <td>${item.titular || ''}</td>
-              <td>${item.tempo || ''}</td>
-              <td>R$ ${(item.valorAcordado || 0).toFixed(2)}</td>
-              <td>R$ ${(item.bonificacao || 0).toFixed(2)}</td>
-              <td>R$ ${(item.desconto || 0).toFixed(2)}</td>
-              <td>R$ ${(item.valorFinal || 0).toFixed(2)}</td>
-              <td>${item.dataPagamento || ''}</td>
-              <td>${item.status}</td>
-              <td>
-                <div class="actions">
-                  <button onclick="alterarStatus(${item.index})">Status</button>
-                  <button onclick="excluir(${item.index})">Excluir</button>
-                </div>
-              </td>`;
-            tbody.appendChild(tr);
-          });
+      fetch(`${URL}?acao=ler`).then(res => res.json()).then(data => {
+        dadosLancamentos = data;
+        const tbody = document.querySelector('#tabela tbody');
+        tbody.innerHTML = '';
+        const filtro = filtroStatus.value || 'PENDENTE';
+        data.forEach(item => {
+          if (filtro !== 'TODOS' && item.status !== filtro) return;
+          const tr = document.createElement('tr');
+          tr.setAttribute('data-index', item.index);
+          tr.className = item.status.toLowerCase();
+          tr.innerHTML = `
+            <td>${item.data?.split('T')[0] || ''}</td>
+            <td>${item.profissional}</td>
+            <td>${item.funcao || ''}</td>
+            <td>${item.pix || ''}</td>
+            <td>${item.titular || ''}</td>
+            <td>${item.tempo || ''}</td>
+            <td>R$ ${(item.valorAcordado || 0).toFixed(2)}</td>
+            <td>R$ ${(item.bonificacao || 0).toFixed(2)}</td>
+            <td>R$ ${(item.desconto || 0).toFixed(2)}</td>
+            <td>R$ ${(item.valorFinal || 0).toFixed(2)}</td>
+            <td>${item.dataPagamento || ''}</td>
+            <td>${item.status}</td>
+            <td><div class="actions">
+              <button onclick="alterarStatus(${item.index})">Status</button>
+              <button onclick="excluir(${item.index})">Excluir</button>
+            </div></td>`;
+          tbody.appendChild(tr);
         });
+      });
     }
 
     function alterarStatus(index) {
       fetch(URL, {
         method: 'POST',
         body: JSON.stringify({ acao: 'status', index })
-      }).then(() => carregarLancamentos());
+      }).then(() => {
+        const linha = document.querySelector(`tr[data-index="${index}"]`);
+        if (linha) {
+          const statusCell = linha.querySelector('td:nth-last-child(2)');
+          statusCell.textContent = 'PAGO';
+          linha.className = 'pago';
+        }
+      });
     }
 
     function excluir(index) {
@@ -275,7 +239,10 @@
         fetch(URL, {
           method: 'POST',
           body: JSON.stringify({ acao: 'excluir', index })
-        }).then(() => carregarLancamentos());
+        }).then(() => {
+          const linha = document.querySelector(`tr[data-index="${index}"]`);
+          if (linha) linha.remove();
+        });
       } else {
         alert("Senha incorreta.");
       }
@@ -287,18 +254,14 @@
         alert("Selecione um status válido (PENDENTE ou LANÇADO) para liquidar.");
         return;
       }
-      const confirmacao = confirm(`Deseja marcar todos os registros com status "${filtro}" como PAGO?`);
-      if (!confirmacao) return;
+      if (!confirm(`Deseja marcar todos os registros com status "${filtro}" como PAGO?`)) return;
 
-      const promessas = dadosLancamentos
-        .filter(item => item.status === filtro)
-        .map(item =>
-          fetch(URL, {
-            method: 'POST',
-            body: JSON.stringify({ acao: 'status', index: item.index })
-          })
-        );
-
+      const promessas = dadosLancamentos.filter(item => item.status === filtro).map(item =>
+        fetch(URL, {
+          method: 'POST',
+          body: JSON.stringify({ acao: 'status', index: item.index })
+        })
+      );
       Promise.all(promessas).then(() => {
         alert("Todos os registros foram atualizados para PAGO.");
         carregarLancamentos();
