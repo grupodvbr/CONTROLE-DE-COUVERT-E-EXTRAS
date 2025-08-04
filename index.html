@@ -176,27 +176,7 @@
     const filtroStatus = document.getElementById('filtroStatus');
     let profissionais = [], dadosLancamentos = [];
 
-    document.addEventListener('DOMContentLoaded', () => {
-      const hoje = new Date();
-      const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-      const selectMes = document.getElementById('mes');
-
-      for (let i = 0; i < 12; i++) {
-        const option = document.createElement('option');
-        option.value = `${nomesMeses[i]} de ${hoje.getFullYear()}`;
-        option.textContent = `${nomesMeses[i]} de ${hoje.getFullYear()}`;
-        if (i === hoje.getMonth()) option.selected = true;
-        selectMes.appendChild(option);
-      }
-
-      function proximaSegunda(dataRef = new Date()) {
-  const dia = dataRef.getDay(); // 0 = domingo, 1 = segunda, ..., 6 = sábado
-  const diasParaSegunda = dia === 1 ? 7 : (8 - dia);
-  const proxima = new Date(dataRef);
-  proxima.setDate(proxima.getDate() + diasParaSegunda);
-  return proxima.toISOString().split('T')[0];
-}
-
+ 
 document.addEventListener('DOMContentLoaded', () => {
   const hoje = new Date();
   const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
