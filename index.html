@@ -6,111 +6,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * { box-sizing: border-box; }
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-    }
+    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; }
+
+    /* Loading */
     #loading-screen {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: white;
-      z-index: 9999;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      position: fixed; inset: 0; background: white; z-index: 9999;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
     }
-    #loading-screen img {
-      width: 200px;
-      animation: fadeIn 1s ease-in-out;
-    }
-    #loading-message {
-      font-size: 18px;
-      margin-top: 20px;
-      color: #333;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    header {
-      display: flex;
-      align-items: center;
-      padding: 10px 20px;
-      background: white;
-      border-bottom: 1px solid #ccc;
-    }
-    header img {
-      height: 50px;
-      margin-right: 20px;
-    }
+    #loading-screen img { width: 200px; animation: fadeIn 1s ease-in-out; }
+    #loading-message { font-size: 18px; margin-top: 20px; color: #333; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95);} to { opacity: 1; transform: scale(1);} }
+
+    header { display: flex; align-items: center; padding: 10px 20px; background: white; border-bottom: 1px solid #ccc; }
+    header img { height: 50px; margin-right: 20px; }
     h1 { font-size: 1.5em; }
+
     form {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      padding: 20px;
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px; padding: 20px;
     }
-    label {
-      font-weight: bold;
-    }
+    label { font-weight: bold; }
     input, select, button {
-      width: 100%;
-      padding: 8px;
-      margin-top: 4px;
-      border-radius: 4px;
-      border: 1px solid #ccc;
-      font-size: 14px;
+      width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: 1px solid #ccc; font-size: 14px;
     }
-    input[readonly] {
-      background: #eee;
-    }
-    button {
-      background: #2c3e50;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #34495e;
-    }
-    table {
-      width: calc(100% - 40px);
-      margin: 0 20px 20px;
-      border-collapse: collapse;
-      background: white;
-    }
-    th, td {
-      padding: 8px;
-      border: 1px solid #ddd;
-      text-align: left;
-      font-size: 13px;
-    }
-    .pago { background: #c8f7c5; }
-    .pendente { background: #f7c5c5; }
-    .lancado { background: #fdf4c5; }
-    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    input[readonly] { background: #eee; }
+    button { background: #2c3e50; color: white; border: none; cursor: pointer; }
+    button:hover { background: #34495e; }
 
     #filtros {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 20px 10px;
-      gap: 10px;
+      display: flex; justify-content: space-between; align-items: center; padding: 0 20px 10px; gap: 10px;
     }
+    #filtros select, #filtros button { padding: 8px; font-size: 14px; }
 
-    #filtros select, #filtros button {
-      padding: 8px;
-      font-size: 14px;
+    table {
+      width: calc(100% - 40px); margin: 0 20px 20px; border-collapse: collapse; background: white;
     }
+    th, td { padding: 8px; border: 1px solid #ddd; text-align: left; font-size: 13px; }
+    .pago { background: #c8f7c5; } .pendente { background: #f7c5c5; } .lancado { background: #fdf4c5; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-    @media (max-width: 768px) {
-      #filtros {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    /* Profissional + link de comentário dentro do mesmo "card" (célula) */
+    .cell-nome { display: flex; flex-direction: column; gap: 4px; }
+    .ver-comentario {
+      align-self: flex-start; appearance: none; border: none; background: none; color: #0b57d0; padding: 0;
+      font-size: 12px; cursor: pointer; text-decoration: underline;
     }
+    .ver-comentario:hover { color: #063e9a; }
+
+    /* Modal de comentário */
+    #comment-modal { display: none; position: fixed; inset: 0; z-index: 10000; align-items: center; justify-content: center; }
+    #comment-modal .backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.45); }
+    #comment-modal .panel {
+      position: relative; z-index: 1; width: min(92vw, 560px); max-height: 80vh; overflow: auto;
+      background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,.25); padding: 14px;
+    }
+    #comment-modal header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    #comment-modal h3 { margin: 0; font-size: 16px; }
+    #comment-modal .close { appearance: none; border: none; background: transparent; font-size: 22px; cursor: pointer; color: #334155; }
+    #comment-text { white-space: pre-wrap; line-height: 1.4; font-size: 14px; color: #111827; }
+    @media (max-width: 768px) { #filtros { flex-direction: column; align-items: flex-start; } }
   </style>
 </head>
 <body>
@@ -165,16 +119,27 @@
 
   <table id="tabela">
     <thead>
-     <tr>
-  <th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th>
-  <th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th>
-  <th>Data Pagamento</th><th><strong>CPF</strong></th>
-  <th>Status</th><th>Ações</th>
-</tr>
-
+      <tr>
+        <th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th>
+        <th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th>
+        <th>Data Pagamento</th><th><strong>CPF</strong></th>
+        <th>Status</th><th>Ações</th>
+      </tr>
     </thead>
     <tbody></tbody>
   </table>
+
+  <!-- Modal de Comentário -->
+  <div id="comment-modal" aria-hidden="true">
+    <div class="backdrop" data-close></div>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="comment-title">
+      <header>
+        <h3 id="comment-title">Comentário</h3>
+        <button class="close" title="Fechar" aria-label="Fechar" data-close>&times;</button>
+      </header>
+      <div id="comment-text">—</div>
+    </div>
+  </div>
 
   <script>
     const URL = 'https://script.google.com/macros/s/AKfycbzPSkWtXyxuCc_AFUGnKz_QiDdQlEN_zsUeQ74J90aRXcBbb7KBm7X1rsG1JmF1iZLN/exec';
@@ -182,32 +147,56 @@
     const filtroStatus = document.getElementById('filtroStatus');
     let profissionais = [], dadosLancamentos = [];
 
-  function proximaSegunda(dataRef = new Date()) {
-    const dia = dataRef.getDay(); // 0 = domingo, 1 = segunda, ..., 6 = sábado
-    const diasParaSegunda = dia === 1 ? 7 : (8 - dia); // sempre próxima segunda, mesmo se hoje for segunda
-    const proxima = new Date(dataRef);
-    proxima.setDate(proxima.getDate() + diasParaSegunda);
-    return proxima.toISOString().split('T')[0];
-  }
- 
-document.addEventListener('DOMContentLoaded', () => {
-  const hoje = new Date();
-  const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  const selectMes = document.getElementById('mes');
+    /* Helpers */
+    const esc = s => String(s||'')
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
 
-  for (let i = 0; i < 12; i++) {
-    const option = document.createElement('option');
-    option.value = `${nomesMeses[i]} de ${hoje.getFullYear()}`;
-    option.textContent = `${nomesMeses[i]} de ${hoje.getFullYear()}`;
-    if (i === hoje.getMonth()) option.selected = true;
-    selectMes.appendChild(option);
-  }
+    function proximaSegunda(dataRef = new Date()) {
+      const dia = dataRef.getDay();
+      const diasParaSegunda = dia === 1 ? 7 : (8 - dia);
+      const proxima = new Date(dataRef);
+      proxima.setDate(proxima.getDate() + diasParaSegunda);
+      return proxima.toISOString().split('T')[0];
+    }
 
-  document.querySelector('input[name="data"]').value = hoje.toISOString().split('T')[0];
-  document.querySelector('input[name="dataPagamento"]').value = proximaSegunda(hoje);
+    /* Modal Comentário */
+    const commentModal = document.getElementById('comment-modal');
+    const commentText  = document.getElementById('comment-text');
+    const commentTitle = document.getElementById('comment-title');
 
+    function openCommentModal(nome, texto){
+      commentTitle.textContent = `Comentário — ${nome}`;
+      commentText.innerHTML = esc(texto || '—');
+      commentModal.style.display = 'flex';
+      commentModal.setAttribute('aria-hidden','false');
+    }
+    function closeCommentModal(){
+      commentModal.style.display = 'none';
+      commentModal.setAttribute('aria-hidden','true');
+    }
+    document.addEventListener('click', (e)=>{
+      if (e.target.matches('#comment-modal [data-close], #comment-modal .backdrop')) closeCommentModal();
     });
 
+    document.addEventListener('DOMContentLoaded', () => {
+      const hoje = new Date();
+      const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+      const selectMes = document.getElementById('mes');
+
+      for (let i = 0; i < 12; i++) {
+        const option = document.createElement('option');
+        option.value = `${nomesMeses[i]} de ${hoje.getFullYear()}`;
+        option.textContent = `${nomesMeses[i]} de ${hoje.getFullYear()}`;
+        if (i === hoje.getMonth()) option.selected = true;
+        selectMes.appendChild(option);
+      }
+
+      document.querySelector('input[name="data"]').value = hoje.toISOString().split('T')[0];
+      document.querySelector('input[name="dataPagamento"]').value = proximaSegunda(hoje);
+    });
+
+    /* Carrega profissionais */
     fetch(`${URL}?acao=profissionais`).then(res => res.json()).then(data => {
       profissionais = data;
       const lista = document.getElementById('listaProfissionais');
@@ -219,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    /* Auto-preenche pelo profissional */
     document.getElementById('profissional').addEventListener('input', () => {
       const nomeDigitado = profissional.value.trim().toUpperCase();
       const p = profissionais.find(p => p.nome.trim().toUpperCase() === nomeDigitado);
@@ -268,6 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
 
+    /* Envio do formulário (JSON) */
     form.addEventListener('submit', e => {
       e.preventDefault();
       const btn = form.querySelector('button[type="submit"]');
@@ -282,16 +273,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const dados = Object.fromEntries(new FormData(form));
       dados.acao = 'adicionar';
 
-      fetch(URL, {
-        method: 'POST',
-        body: JSON.stringify(dados)
-      }).then(() => {
+      fetch(URL, { method: 'POST', body: JSON.stringify(dados) })
+      .then(() => {
         form.reset();
         filtroStatus.value = 'PENDENTE';
         setTimeout(() => {
-          btn.disabled = false;
-          btn.textContent = 'Salvar';
-          loading.style.display = 'none';
+          btn.disabled = false; btn.textContent = 'Salvar'; loading.style.display = 'none';
           carregarLancamentos();
         }, 1500);
       });
@@ -299,6 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     filtroStatus.addEventListener('change', carregarLancamentos);
 
+    /* Render tabela (inclui link VER COMENTÁRIO na célula do nome) */
     function carregarLancamentos() {
       fetch(`${URL}?acao=ler`).then(res => res.json()).then(data => {
         dadosLancamentos = data;
@@ -307,23 +295,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtro = filtroStatus.value || 'PENDENTE';
         data.forEach(item => {
           if (filtro !== 'TODOS' && item.status !== filtro) return;
+
+          const comentario = (item.comentario || '').toString().trim();
+          const temComentario = comentario.length > 0;
+
           const tr = document.createElement('tr');
           tr.setAttribute('data-index', item.index);
-          tr.className = item.status.toLowerCase();
+          tr.className = (item.status || '').toLowerCase();
+
           tr.innerHTML = `
             <td>${item.data?.split('T')[0] || ''}</td>
-            <td>${item.profissional}</td>
-            <td>${item.funcao || ''}</td>
-            <td>${item.pix || ''}</td>
-            <td>${item.titular || ''}</td>
-            <td>${item.tempo || ''}</td>
+            <td>
+              <div class="cell-nome">
+                <div class="nome">${esc(item.profissional || '')}</div>
+                ${temComentario ? `<button type="button" class="ver-comentario" data-nome="${esc(item.profissional||'')}" data-coment="${esc(comentario)}">VER COMENTÁRIO</button>` : ''}
+              </div>
+            </td>
+            <td>${esc(item.funcao || '')}</td>
+            <td>${esc(item.pix || '')}</td>
+            <td>${esc(item.titular || '')}</td>
+            <td>${esc(item.tempo || '')}</td>
             <td>R$ ${(item.valorAcordado || 0).toFixed(2)}</td>
             <td>R$ ${(item.bonificacao || 0).toFixed(2)}</td>
             <td>R$ ${(item.desconto || 0).toFixed(2)}</td>
             <td>R$ ${(item.valorFinal || 0).toFixed(2)}</td>
             <td>${item.dataPagamento ? new Date(item.dataPagamento).toLocaleDateString('pt-BR') : ''}</td>
-            <td>${item.cpf || ''}</td>
-
+            <td>${esc(item.cpf || '')}</td>
             <td>
               <select onchange="atualizarStatus(this, ${item.index})">
                 <option value="PENDENTE" ${item.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
@@ -331,11 +328,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 <option value="PAGO" ${item.status === 'PAGO' ? 'selected' : ''}>PAGO</option>
               </select>
             </td>
-            <td><div class="actions"><button onclick="excluir(${item.index})">Excluir</button></div></td>`;
+            <td><div class="actions"><button onclick="excluir(${item.index})">Excluir</button></div></td>
+          `;
           tbody.appendChild(tr);
         });
       });
     }
+
+    /* Delegação de clique para abrir comentário */
+    document.querySelector('#tabela tbody').addEventListener('click', (e)=>{
+      const btn = e.target.closest('.ver-comentario');
+      if (!btn) return;
+      const nome = btn.getAttribute('data-nome') || 'Profissional';
+      const coment = btn.getAttribute('data-coment') || '';
+      openCommentModal(nome, coment);
+    });
 
     function atualizarStatus(select, index) {
       const status = select.value;
@@ -345,22 +352,15 @@ document.addEventListener('DOMContentLoaded', () => {
       msg.textContent = 'Atualizando status...';
       loading.style.display = 'flex';
 
-      fetch(URL, {
-        method: 'POST',
-        body: JSON.stringify({ acao: 'atualizarStatus', index, status })
-      })
-      .then(() => {
-        setTimeout(() => location.reload(), 1500);
-      });
+      fetch(URL, { method: 'POST', body: JSON.stringify({ acao: 'atualizarStatus', index, status }) })
+      .then(() => { setTimeout(() => location.reload(), 1500); });
     }
 
     function excluir(index) {
       const senha = prompt("Digite a senha para excluir:");
       if (senha === '1234') {
-        fetch(URL, {
-          method: 'POST',
-          body: JSON.stringify({ acao: 'excluir', index })
-        }).then(() => {
+        fetch(URL, { method: 'POST', body: JSON.stringify({ acao: 'excluir', index }) })
+        .then(() => {
           const linha = document.querySelector(`tr[data-index="${index}"]`);
           if (linha) linha.remove();
         });
@@ -377,12 +377,10 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (!confirm(`Deseja marcar todos os registros com status "${filtro}" como PAGO?`)) return;
 
-      const promessas = dadosLancamentos.filter(item => item.status === filtro).map(item =>
-        fetch(URL, {
-          method: 'POST',
-          body: JSON.stringify({ acao: 'atualizarStatus', index: item.index, status: 'PAGO' })
-        })
-      );
+      const promessas = dadosLancamentos
+        .filter(item => item.status === filtro)
+        .map(item => fetch(URL, { method: 'POST', body: JSON.stringify({ acao: 'atualizarStatus', index: item.index, status: 'PAGO' }) }));
+
       Promise.all(promessas).then(() => {
         alert("Todos os registros foram atualizados para PAGO.");
         location.reload();
@@ -402,11 +400,11 @@ document.addEventListener('DOMContentLoaded', () => {
   </script>
 
   <script>
+    /* Máscara + validação CPF/CNPJ */
     const cpfCnpjInput = document.getElementById("cpfCnpj");
 
     cpfCnpjInput.addEventListener("input", () => {
       let v = cpfCnpjInput.value.replace(/\D/g, "");
-
       if (v.length <= 11) {
         v = v.replace(/(\d{3})(\d)/, "$1.$2");
         v = v.replace(/(\d{3})(\d)/, "$1.$2");
@@ -417,7 +415,6 @@ document.addEventListener('DOMContentLoaded', () => {
         v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
         v = v.replace(/(\d{4})(\d)/, "$1-$2");
       }
-
       cpfCnpjInput.value = v;
     });
 
@@ -426,13 +423,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
       let soma = 0;
       for (let i = 0; i < 9; i++) soma += +cpf[i] * (10 - i);
-      let resto = (soma * 10) % 11;
-      if (resto === 10 || resto === 11) resto = 0;
+      let resto = (soma * 10) % 11; if (resto === 10 || resto === 11) resto = 0;
       if (resto !== +cpf[9]) return false;
       soma = 0;
       for (let i = 0; i < 10; i++) soma += +cpf[i] * (11 - i);
-      resto = (soma * 10) % 11;
-      if (resto === 10 || resto === 11) resto = 0;
+      resto = (soma * 10) % 11; if (resto === 10 || resto === 11) resto = 0;
       return resto === +cpf[10];
     }
 
@@ -441,12 +436,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
       let t = cnpj.length - 2, d = cnpj.substring(t), d1 = +d[0], d2 = +d[1];
       let calc = x => {
-        let n = cnpj.substring(0, x);
-        let r = 0, pos = x - 7;
-        for (let i = x; i >= 1; i--) {
-          r += +n[x - i] * pos--;
-          if (pos < 2) pos = 9;
-        }
+        let n = cnpj.substring(0, x); let r = 0, pos = x - 7;
+        for (let i = x; i >= 1; i--) { r += +n[x - i] * pos--; if (pos < 2) pos = 9; }
         return ((r % 11) < 2 ? 0 : 11 - (r % 11));
       };
       return calc(t) === d1 && calc(t + 1) === d2;
@@ -455,17 +446,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('form').addEventListener('submit', function (e) {
       const doc = cpfCnpjInput.value.replace(/\D/g, '');
       if (doc.length <= 11) {
-        if (!validarCPF(doc)) {
-          alert('CPF inválido!');
-          e.preventDefault();
-          cpfCnpjInput.focus();
-        }
+        if (!validarCPF(doc)) { alert('CPF inválido!'); e.preventDefault(); cpfCnpjInput.focus(); }
       } else {
-        if (!validarCNPJ(doc)) {
-          alert('CNPJ inválido!');
-          e.preventDefault();
-          cpfCnpjInput.focus();
-        }
+        if (!validarCNPJ(doc)) { alert('CNPJ inválido!'); e.preventDefault(); cpfCnpjInput.focus(); }
       }
     });
   </script>
