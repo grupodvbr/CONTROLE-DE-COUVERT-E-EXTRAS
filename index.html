@@ -111,6 +111,42 @@
         align-items: flex-start;
       }
     }
+
+    /* link "VER COMENTÁRIO" sob o nome */
+    .ver-comentario {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: #0b5ed7;
+      text-decoration: underline;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    /* Popup simples de comentário */
+    #coment-modal {
+      display: none;
+      position: fixed; inset: 0; z-index: 10000;
+      align-items: center; justify-content: center;
+    }
+    #coment-modal .backdrop {
+      position: absolute; inset: 0; background: rgba(0,0,0,.45);
+    }
+    #coment-modal .panel {
+      position: relative; z-index: 1;
+      width: min(92vw, 520px);
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      padding: 14px 16px;
+    }
+    #coment-modal h3 { margin: 0 0 8px; font-size: 16px; }
+    #coment-modal p { margin: 0; white-space: pre-wrap; }
+    #coment-modal .close {
+      position:absolute; top:8px; right:10px;
+      background: transparent; border: none; font-size: 20px; cursor: pointer; color: #555;
+    }
   </style>
 </head>
 <body>
@@ -175,6 +211,16 @@
     </thead>
     <tbody></tbody>
   </table>
+
+  <!-- Popup de comentário -->
+  <div id="coment-modal" aria-hidden="true">
+    <div class="backdrop" onclick="fecharComentario()"></div>
+    <div class="panel" role="dialog" aria-modal="true" aria-labelledby="coment-title">
+      <button class="close" title="Fechar" aria-label="Fechar" onclick="fecharComentario()">&times;</button>
+      <h3 id="coment-title">Comentário</h3>
+      <p id="coment-texto"></p>
+    </div>
+  </div>
 
   <script>
     const URL = 'https://script.google.com/macros/s/AKfycbzPSkWtXyxuCc_AFUGnKz_QiDdQlEN_zsUeQ74J90aRXcBbb7KBm7X1rsG1JmF1iZLN/exec';
@@ -307,12 +353,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtro = filtroStatus.value || 'PENDENTE';
         data.forEach(item => {
           if (filtro !== 'TODOS' && item.status !== filtro) return;
+
+          // pega comentário (coluna depois de Status retornada pela API)
+          const comentario = (item.comentario || '').toString().trim();
+          const temComentario = comentario.length > 0;
+          const linkComentario = temComentario
+            ? `<div><button class="ver-comentario" onclick="abrirComentario(${item.index})">VER COMENTÁRIO</button></div>`
+            : '';
+
           const tr = document.createElement('tr');
           tr.setAttribute('data-index', item.index);
           tr.className = item.status.toLowerCase();
           tr.innerHTML = `
             <td>${item.data?.split('T')[0] || ''}</td>
-            <td>${item.profissional}</td>
+            <td>${item.profissional}${linkComentario}</td>
             <td>${item.funcao || ''}</td>
             <td>${item.pix || ''}</td>
             <td>${item.titular || ''}</td>
@@ -335,6 +389,23 @@ document.addEventListener('DOMContentLoaded', () => {
           tbody.appendChild(tr);
         });
       });
+    }
+
+    // Popup de comentário
+    function abrirComentario(index){
+      const item = (dadosLancamentos || []).find(x => x.index === index);
+      const texto = (item && item.comentario ? String(item.comentario) : '').trim();
+      if(!texto){ alert('Sem comentário para este lançamento.'); return; }
+      document.getElementById('coment-texto').textContent = texto;
+      const modal = document.getElementById('coment-modal');
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden','false');
+    }
+    function fecharComentario(){
+      const modal = document.getElementById('coment-modal');
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden','true');
+      document.getElementById('coment-texto').textContent = '';
     }
 
     function atualizarStatus(select, index) {
