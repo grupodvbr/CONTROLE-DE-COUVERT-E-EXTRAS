@@ -2,46 +2,151 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>CONTROLE DE COUVERT E EXTRAS - MERCATTO</title>
+  <title>CONTROLE DE COUVERT E EXTRAS - DELÍCIA GOURMET</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     * { box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+    }
     #loading-screen {
-      position: fixed; inset: 0;
-      background: white; z-index: 9999;
-      display: flex; flex-direction: column;
-      justify-content: center; align-items: center;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: white;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
-    #loading-screen img { width: 200px; animation: fadeIn 1s ease-in-out; }
-    #loading-message { font-size: 18px; margin-top: 20px; color: #333; }
-    @keyframes fadeIn { from {opacity:0; transform:scale(.95);} to {opacity:1; transform:scale(1);} }
-    header { display:flex; align-items:center; padding:10px 20px; background:white; border-bottom:1px solid #ccc; }
-    header img { height: 50px; margin-right: 20px; }
+    #loading-screen img {
+      width: 200px;
+      animation: fadeIn 1s ease-in-out;
+    }
+    #loading-message {
+      font-size: 18px;
+      margin-top: 20px;
+      color: #333;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    header {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      background: white;
+      border-bottom: 1px solid #ccc;
+    }
+    header img {
+      height: 50px;
+      margin-right: 20px;
+    }
     h1 { font-size: 1.5em; }
-    form { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 20px; }
-    label { font-weight: bold; }
-    input, select, button {
-      width: 100%; padding: 8px; margin-top: 4px;
-      border-radius: 4px; border: 1px solid #ccc; font-size: 14px;
+    form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px;
     }
-    input[readonly] { background: #eee; }
-    button { background: #2c3e50; color: white; border: none; cursor: pointer; }
-    button:hover { background: #34495e; }
-    table { width: calc(100% - 40px); margin: 0 20px 20px; border-collapse: collapse; background: white; }
-    th, td { padding: 8px; border: 1px solid #ddd; text-align: left; font-size: 13px; }
-    .pago { background: #c8f7c5; } .pendente { background: #f7c5c5; } .lancado { background: #fdf4c5; }
-    .actions { display:flex; gap:8px; flex-wrap:wrap; }
-    #filtros { display:flex; justify-content:flex-start; align-items:center; padding:0 20px 10px; gap:10px; flex-wrap:wrap; }
-    #filtros select { padding:8px; font-size:14px; }
-    @media (max-width: 768px) { #filtros { flex-direction:column; align-items:flex-start; } }
-    .ver-comentario{display:inline-block; margin-top:4px; font-size:12px; color:#0b5ed7; text-decoration:underline; background:transparent; border:none; padding:0; cursor:pointer;}
-    #coment-modal{display:none; position:fixed; inset:0; z-index:10000; align-items:center; justify-content:center;}
-    #coment-modal .backdrop{position:absolute; inset:0; background:rgba(0,0,0,.45);}
-    #coment-modal .panel{position:relative; z-index:1; width:min(92vw,520px); background:#fff; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,.25); padding:14px 16px;}
-    #coment-modal h3{margin:0 0 8px; font-size:16px;}
-    #coment-modal p{margin:0; white-space:pre-wrap;}
-    #coment-modal .close{position:absolute; top:8px; right:10px; background:transparent; border:none; font-size:20px; cursor:pointer; color:#555;}
+    label {
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+    input[readonly] {
+      background: #eee;
+    }
+    button {
+      background: #2c3e50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #34495e;
+    }
+    table {
+      width: calc(100% - 40px);
+      margin: 0 20px 20px;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      padding: 8px;
+      border: 1px solid #ddd;
+      text-align: left;
+      font-size: 13px;
+    }
+    .pago { background: #c8f7c5; }
+    .pendente { background: #f7c5c5; }
+    .lancado { background: #fdf4c5; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    #filtros {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px 10px;
+      gap: 10px;
+    }
+
+    #filtros select, #filtros button {
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      #filtros {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    /* link "VER COMENTÁRIO" sob o nome */
+    .ver-comentario {
+      display: inline-block;
+      margin-top: 4px;
+      font-size: 12px;
+      color: #0b5ed7;
+      text-decoration: underline;
+      background: transparent;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    /* Popup simples de comentário */
+    #coment-modal {
+      display: none;
+      position: fixed; inset: 0; z-index: 10000;
+      align-items: center; justify-content: center;
+    }
+    #coment-modal .backdrop {
+      position: absolute; inset: 0; background: rgba(0,0,0,.45);
+    }
+    #coment-modal .panel {
+      position: relative; z-index: 1;
+      width: min(92vw, 520px);
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      padding: 14px 16px;
+    }
+    #coment-modal h3 { margin: 0 0 8px; font-size: 16px; }
+    #coment-modal p { margin: 0; white-space: pre-wrap; }
+    #coment-modal .close {
+      position:absolute; top:8px; right:10px;
+      background: transparent; border: none; font-size: 20px; cursor: pointer; color: #555;
+    }
   </style>
 </head>
 <body>
@@ -53,18 +158,10 @@
 
   <header>
     <img src="https://static.wixstatic.com/media/d830b0_8cec50a98bbf4775814dbfa5386585e8~mv2.png" alt="Logo">
-    <h1>CONTROLE DE COUVERT E EXTRA - MERCATTO</h1>
+    <h1>CONTROLE DE COUVERT E EXTRA - DELÍCIA GOURMET</h1>
   </header>
 
   <form id="form">
-    <div><label>Empresa</label>
-      <select name="empresa" id="empresa" required>
-        <option value="MERCATTO DELÍCIA">MERCATTO DELÍCIA</option>
-        <option value="MERCATTO RESTAURANTE">MERCATTO RESTAURANTE</option>
-        <option value="MERCATTO EMPÓRIO">MERCATTO EMPÓRIO</option>
-        <option value="MERCATTO KIDS">MERCATTO KIDS</option>
-      </select>
-    </div>
     <div><label>CPF ou CNPJ</label><input type="text" name="cpf" id="cpfCnpj" required placeholder="Digite o número verdadeiro"></div>
     <div><label>Mês</label><select name="mes" id="mes" required></select></div>
     <div><label>Data</label><input type="date" name="data" required></div>
@@ -99,27 +196,18 @@
         <option value="PAGO">PAGO</option>
       </select>
     </div>
-    <div>
-      <label>Filtrar por empresa:</label>
-      <select id="filtroEmpresa">
-        <option value="TODAS" selected>TODAS</option>
-        <option value="MERCATTO DELÍCIA">MERCATTO DELÍCIA</option>
-        <option value="MERCATTO RESTAURANTE">MERCATTO RESTAURANTE</option>
-        <option value="MERCATTO EMPÓRIO">MERCATTO EMPÓRIO</option>
-        <option value="MERCATTO KIDS">MERCATTO KIDS</option>
-      </select>
-    </div>
+    <button onclick="liquidarEmMassa()">Liquidar em Massa</button>
   </div>
 
   <table id="tabela">
     <thead>
-      <tr>
-        <th>Empresa</th>
-        <th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th>
-        <th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th>
-        <th>Data Pagamento</th><th><strong>CPF</strong></th>
-        <th>Status</th><th>Ações</th>
-      </tr>
+     <tr>
+  <th>Data</th><th>Profissional</th><th>Função</th><th>Pix</th><th>Titular</th><th>Tempo</th>
+  <th>Valor Acordado</th><th>Bonificação</th><th>Desconto</th><th>Valor Final</th>
+  <th>Data Pagamento</th><th><strong>CPF</strong></th>
+  <th>Status</th><th>Ações</th>
+</tr>
+
     </thead>
     <tbody></tbody>
   </table>
@@ -135,74 +223,51 @@
   </div>
 
   <script>
-    const URL = 'https://script.google.com/macros/s/AKfycbydhKhv49t9MVo-wvaq-a7v1JrKuDytuQyioXsCGZ7SSSy7eUAltj01ZTPNYMohL-Fz/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbxWrof6NgQLV8P6UnSKJivNvuEE4NwYYy7DEg84r05Yk4fG5w1IRqdW7awoxRpVC5YrBA/exec';
     const form = document.getElementById('form');
     const filtroStatus = document.getElementById('filtroStatus');
-    const filtroEmpresa = document.getElementById('filtroEmpresa');
-    let servidores = [], dadosRegistros = [];
+    let profissionais = [], dadosLancamentos = [];
 
-    // Carregar registros
-    function carregarRegistros() {
-      fetch(`${URL}?acao=ler`).then(res => res.json()).then(data => {
-        dadosRegistros = data;
-        const tbody = document.querySelector('#tabela tbody');
-        tbody.innerHTML = '';
-        const filtroS = filtroStatus.value || 'PENDENTE';
-        const filtroE = filtroEmpresa.value || 'TODAS';
+  function proximaSegunda(dataRef = new Date()) {
+    const dia = dataRef.getDay(); // 0 = domingo, 1 = segunda, ..., 6 = sábado
+    const diasParaSegunda = dia === 1 ? 7 : (8 - dia); // sempre próxima segunda, mesmo se hoje for segunda
+    const proxima = new Date(dataRef);
+    proxima.setDate(proxima.getDate() + diasParaSegunda);
+    return proxima.toISOString().split('T')[0];
+  }
+ 
+document.addEventListener('DOMContentLoaded', () => {
+  const hoje = new Date();
+  const nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const selectMes = document.getElementById('mes');
 
-        data.forEach(item => {
-          if (filtroS !== 'TODOS' && item.status !== filtroS) return;
-          if (filtroE !== 'TODAS' && item.empresa !== filtroE) return;
+  for (let i = 0; i < 12; i++) {
+    const option = document.createElement('option');
+    option.value = `${nomesMeses[i]} de ${hoje.getFullYear()}`;
+    option.textContent = `${nomesMeses[i]} de ${hoje.getFullYear()}`;
+    if (i === hoje.getMonth()) option.selected = true;
+    selectMes.appendChild(option);
+  }
 
-          const comentario = (item.comentario || '').toString().trim();
-          const linkComentario = comentario
-            ? `<div><button class="ver-comentario" onclick="abrirComentario(${item.index})">VER COMENTÁRIO</button></div>`
-            : '';
+  document.querySelector('input[name="data"]').value = hoje.toISOString().split('T')[0];
+  document.querySelector('input[name="dataPagamento"]').value = proximaSegunda(hoje);
 
-          const tr = document.createElement('tr');
-          tr.setAttribute('data-index', item.index);
+    });
 
-          tr.innerHTML = `
-            <td>${item.empresa || ''}</td>
-            <td>${item.data?.split('T')[0] || ''}</td>
-            <td>${item.profissional || ''}${linkComentario}</td>
-            <td>${item.funcao || ''}</td>
-            <td>${item.pix || ''}</td>
-            <td>${item.titular || ''}</td>
-            <td>${item.tempo || ''}</td>
-            <td>R$ ${(item.valorAcordado || 0).toFixed(2)}</td>
-            <td>R$ ${(item.bonificacao || 0).toFixed(2)}</td>
-            <td>R$ ${(item.desconto || 0).toFixed(2)}</td>
-            <td>R$ ${(item.valorFinal || 0).toFixed(2)}</td>
-            <td>${item.dataPagamento ? new Date(item.dataPagamento).toLocaleDateString('pt-BR') : ''}</td>
-            <td>${item.cpf || ''}</td>
-            <td>
-              <select onchange="atualizarStatus(this, ${item.index})">
-                <option value="PENDENTE" ${item.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
-                <option value="LANÇADO" ${item.status === 'LANÇADO' ? 'selected' : ''}>LANÇADO</option>
-                <option value="PAGO" ${item.status === 'PAGO' ? 'selected' : ''}>PAGO</option>
-              </select>
-            </td>
-            <td><div class="actions"><button onclick="excluir(${item.index})">Excluir</button></div></td>
-          `;
-          tbody.appendChild(tr);
-        });
+    fetch(`${URL}?acao=profissionais`).then(res => res.json()).then(data => {
+      profissionais = data;
+      const lista = document.getElementById('listaProfissionais');
+      lista.innerHTML = '';
+      data.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.nome;
+        lista.appendChild(opt);
       });
-    }
+    });
 
-    filtroStatus.addEventListener('change', carregarRegistros);
-    filtroEmpresa.addEventListener('change', carregarRegistros);
-
-    // Exemplo de função de preenchimento automático (com Função desbloqueada)
-    document.getElementById('profissional').addEventListener('change', e => {
-      const nome = e.target.value;
-      const p = servidores.find(s => s.profissional === nome);
-
-      const funcao = document.getElementById('funcao');
-      const dadosPix = document.getElementById('dadosPix');
-      const titularConta = document.getElementById('titularConta');
-      const valorAcordado = document.getElementById('valorAcordado');
-      const cpfCnpj = document.getElementById('cpfCnpj');
+    document.getElementById('profissional').addEventListener('input', () => {
+      const nomeDigitado = profissional.value.trim().toUpperCase();
+      const p = profissionais.find(p => p.nome.trim().toUpperCase() === nomeDigitado);
 
       if (p) {
         funcao.value = p.funcao || '';
@@ -211,15 +276,12 @@
         valorAcordado.value = p.valor || '';
         cpfCnpj.value = p.cpf || '';
 
-        // Função sempre editável
-        funcao.readOnly = false;
-        funcao.style.background = '';
-
+        funcao.readOnly = true;
         dadosPix.readOnly = true;
         titularConta.readOnly = true;
         valorAcordado.readOnly = false;
         cpfCnpj.readOnly = true;
-
+        funcao.style.background = '#eee';
         dadosPix.style.background = '#eee';
         titularConta.style.background = '#eee';
         cpfCnpj.style.background = '#eee';
@@ -236,7 +298,6 @@
         titularConta.readOnly = false;
         valorAcordado.readOnly = false;
         cpfCnpj.readOnly = false;
-
         funcao.style.background = '';
         dadosPix.style.background = '';
         titularConta.style.background = '';
@@ -244,6 +305,241 @@
         valorAcordado.style.background = '';
       }
     });
+
+    [valorAcordado, desconto].forEach(input => {
+      input.addEventListener('input', () => {
+        const v = parseFloat(valorAcordado.value) || 0;
+        const d = parseFloat(desconto.value) || 0;
+        valorFinal.value = (v - d).toFixed(2);
+      });
+    });
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      const loading = document.getElementById('loading-screen');
+      const msg = document.getElementById('loading-message');
+
+      btn.disabled = true;
+      btn.textContent = 'Salvando...';
+      msg.textContent = 'Salvando dados...';
+      loading.style.display = 'flex';
+
+      const dados = Object.fromEntries(new FormData(form));
+      dados.acao = 'adicionar';
+
+      fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify(dados)
+      }).then(() => {
+        form.reset();
+        filtroStatus.value = 'PENDENTE';
+        setTimeout(() => {
+          btn.disabled = false;
+          btn.textContent = 'Salvar';
+          loading.style.display = 'none';
+          carregarLancamentos();
+        }, 1500);
+      });
+    });
+
+    filtroStatus.addEventListener('change', carregarLancamentos);
+
+    function carregarLancamentos() {
+      fetch(`${URL}?acao=ler`).then(res => res.json()).then(data => {
+        dadosLancamentos = data;
+        const tbody = document.querySelector('#tabela tbody');
+        tbody.innerHTML = '';
+        const filtro = filtroStatus.value || 'PENDENTE';
+        data.forEach(item => {
+          if (filtro !== 'TODOS' && item.status !== filtro) return;
+
+          // pega comentário (coluna depois de Status retornada pela API)
+          const comentario = (item.comentario || '').toString().trim();
+          const temComentario = comentario.length > 0;
+          const linkComentario = temComentario
+            ? `<div><button class="ver-comentario" onclick="abrirComentario(${item.index})">VER COMENTÁRIO</button></div>`
+            : '';
+
+          const tr = document.createElement('tr');
+          tr.setAttribute('data-index', item.index);
+          tr.className = item.status.toLowerCase();
+          tr.innerHTML = `
+            <td>${item.data?.split('T')[0] || ''}</td>
+            <td>${item.profissional}${linkComentario}</td>
+            <td>${item.funcao || ''}</td>
+            <td>${item.pix || ''}</td>
+            <td>${item.titular || ''}</td>
+            <td>${item.tempo || ''}</td>
+            <td>R$ ${(item.valorAcordado || 0).toFixed(2)}</td>
+            <td>R$ ${(item.bonificacao || 0).toFixed(2)}</td>
+            <td>R$ ${(item.desconto || 0).toFixed(2)}</td>
+            <td>R$ ${(item.valorFinal || 0).toFixed(2)}</td>
+            <td>${item.dataPagamento ? new Date(item.dataPagamento).toLocaleDateString('pt-BR') : ''}</td>
+            <td>${item.cpf || ''}</td>
+
+            <td>
+              <select onchange="atualizarStatus(this, ${item.index})">
+                <option value="PENDENTE" ${item.status === 'PENDENTE' ? 'selected' : ''}>PENDENTE</option>
+                <option value="LANÇADO" ${item.status === 'LANÇADO' ? 'selected' : ''}>LANÇADO</option>
+                <option value="PAGO" ${item.status === 'PAGO' ? 'selected' : ''}>PAGO</option>
+              </select>
+            </td>
+            <td><div class="actions"><button onclick="excluir(${item.index})">Excluir</button></div></td>`;
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    // Popup de comentário
+    function abrirComentario(index){
+      const item = (dadosLancamentos || []).find(x => x.index === index);
+      const texto = (item && item.comentario ? String(item.comentario) : '').trim();
+      if(!texto){ alert('Sem comentário para este lançamento.'); return; }
+      document.getElementById('coment-texto').textContent = texto;
+      const modal = document.getElementById('coment-modal');
+      modal.style.display = 'flex';
+      modal.setAttribute('aria-hidden','false');
+    }
+    function fecharComentario(){
+      const modal = document.getElementById('coment-modal');
+      modal.style.display = 'none';
+      modal.setAttribute('aria-hidden','true');
+      document.getElementById('coment-texto').textContent = '';
+    }
+
+    function atualizarStatus(select, index) {
+      const status = select.value;
+      const loading = document.getElementById('loading-screen');
+      const msg = document.getElementById('loading-message');
+
+      msg.textContent = 'Atualizando status...';
+      loading.style.display = 'flex';
+
+      fetch(URL, {
+        method: 'POST',
+        body: JSON.stringify({ acao: 'atualizarStatus', index, status })
+      })
+      .then(() => {
+        setTimeout(() => location.reload(), 1500);
+      });
+    }
+
+    function excluir(index) {
+      const senha = prompt("Digite a senha para excluir:");
+      if (senha === '1234') {
+        fetch(URL, {
+          method: 'POST',
+          body: JSON.stringify({ acao: 'excluir', index })
+        }).then(() => {
+          const linha = document.querySelector(`tr[data-index="${index}"]`);
+          if (linha) linha.remove();
+        });
+      } else {
+        alert("Senha incorreta.");
+      }
+    }
+
+    function liquidarEmMassa() {
+      const filtro = filtroStatus.value;
+      if (filtro === 'TODOS' || filtro === 'PAGO') {
+        alert("Selecione um status válido (PENDENTE ou LANÇADO) para liquidar.");
+        return;
+      }
+      if (!confirm(`Deseja marcar todos os registros com status "${filtro}" como PAGO?`)) return;
+
+      const promessas = dadosLancamentos.filter(item => item.status === filtro).map(item =>
+        fetch(URL, {
+          method: 'POST',
+          body: JSON.stringify({ acao: 'atualizarStatus', index: item.index, status: 'PAGO' })
+        })
+      );
+      Promise.all(promessas).then(() => {
+        alert("Todos os registros foram atualizados para PAGO.");
+        location.reload();
+      });
+    }
+
+    window.addEventListener('load', () => {
+      const loading = document.getElementById('loading-screen');
+      const msg = document.getElementById('loading-message');
+      msg.textContent = 'Carregando...';
+      setTimeout(() => {
+        loading.style.display = 'none';
+        filtroStatus.value = 'PENDENTE';
+        carregarLancamentos();
+      }, 2000);
+    });
   </script>
+
+  <script>
+    const cpfCnpjInput = document.getElementById("cpfCnpj");
+
+    cpfCnpjInput.addEventListener("input", () => {
+      let v = cpfCnpjInput.value.replace(/\D/g, "");
+
+      if (v.length <= 11) {
+        v = v.replace(/(\d{3})(\d)/, "$1.$2");
+        v = v.replace(/(\d{3})(\d)/, "$1.$2");
+        v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+      } else {
+        v = v.replace(/^(\d{2})(\d)/, "$1.$2");
+        v = v.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+        v = v.replace(/\.(\d{3})(\d)/, ".$1/$2");
+        v = v.replace(/(\d{4})(\d)/, "$1-$2");
+      }
+
+      cpfCnpjInput.value = v;
+    });
+
+    function validarCPF(cpf) {
+      cpf = cpf.replace(/\D/g, '');
+      if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return false;
+      let soma = 0;
+      for (let i = 0; i < 9; i++) soma += +cpf[i] * (10 - i);
+      let resto = (soma * 10) % 11;
+      if (resto === 10 || resto === 11) resto = 0;
+      if (resto !== +cpf[9]) return false;
+      soma = 0;
+      for (let i = 0; i < 10; i++) soma += +cpf[i] * (11 - i);
+      resto = (soma * 10) % 11;
+      if (resto === 10 || resto === 11) resto = 0;
+      return resto === +cpf[10];
+    }
+
+    function validarCNPJ(cnpj) {
+      cnpj = cnpj.replace(/\D/g, '');
+      if (cnpj.length !== 14 || /^(\d)\1+$/.test(cnpj)) return false;
+      let t = cnpj.length - 2, d = cnpj.substring(t), d1 = +d[0], d2 = +d[1];
+      let calc = x => {
+        let n = cnpj.substring(0, x);
+        let r = 0, pos = x - 7;
+        for (let i = x; i >= 1; i--) {
+          r += +n[x - i] * pos--;
+          if (pos < 2) pos = 9;
+        }
+        return ((r % 11) < 2 ? 0 : 11 - (r % 11));
+      };
+      return calc(t) === d1 && calc(t + 1) === d2;
+    }
+
+    document.getElementById('form').addEventListener('submit', function (e) {
+      const doc = cpfCnpjInput.value.replace(/\D/g, '');
+      if (doc.length <= 11) {
+        if (!validarCPF(doc)) {
+          alert('CPF inválido!');
+          e.preventDefault();
+          cpfCnpjInput.focus();
+        }
+      } else {
+        if (!validarCNPJ(doc)) {
+          alert('CNPJ inválido!');
+          e.preventDefault();
+          cpfCnpjInput.focus();
+        }
+      }
+    });
+  </script>
+
 </body>
 </html>
