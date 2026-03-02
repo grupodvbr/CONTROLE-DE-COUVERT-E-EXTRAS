@@ -227,7 +227,7 @@
     const form = document.getElementById('form');
     const filtroStatus = document.getElementById('filtroStatus');
     let profissionais = [], dadosLancamentos = [];
-
+carregarLancamentos();
   function proximaSegunda(dataRef = new Date()) {
     const dia = dataRef.getDay(); // 0 = domingo, 1 = segunda, ..., 6 = sábado
     const diasParaSegunda = dia === 1 ? 7 : (8 - dia); // sempre próxima segunda, mesmo se hoje for segunda
@@ -317,18 +317,20 @@ document.addEventListener('DOMContentLoaded', () => {
 function verificarDuplicidade(novoLancamento) {
   return dadosLancamentos.find(item => {
 
-    const mesmaPessoa = (item.cpf || '').replace(/\D/g,'') === 
-                        (novoLancamento.cpf || '').replace(/\D/g,'');
+    const mesmaPessoa =
+      (item.cpf || '').replace(/\D/g,'') ===
+      (novoLancamento.cpf || '').replace(/\D/g,'');
 
-    const mesmaData = (item.data || '').split('T')[0] === novoLancamento.data;
+    const mesmaData =
+      (item.data || '').split('T')[0] === novoLancamento.data;
 
-    const mesmoValor = parseFloat(item.valorFinal || 0).toFixed(2) ===
-                       parseFloat(novoLancamento.valorFinal || 0).toFixed(2);
+    const mesmoValor =
+      parseFloat(item.valorFinal || 0).toFixed(2) ===
+      parseFloat(novoLancamento.valorFinal || 0).toFixed(2);
 
     return mesmaPessoa && mesmaData && mesmoValor;
   });
 }
-
 
     
 form.addEventListener('submit', e => {
@@ -336,13 +338,14 @@ form.addEventListener('submit', e => {
 
   const dados = Object.fromEntries(new FormData(form));
   dados.acao = 'adicionar';
+  dados.valorFinal = parseFloat(dados.valorFinal || 0).toFixed(2);
 
-  // 🔎 VERIFICA DUPLICIDADE
   const duplicado = verificarDuplicidade(dados);
 
   if (duplicado) {
     const continuar = confirm(
-      `⚠️ ATENÇÃO!\n\nJá existe um lançamento com:\n\n` +
+      `⚠️ ATENÇÃO!\n\n` +
+      `Já existe um lançamento com:\n\n` +
       `Profissional: ${duplicado.profissional}\n` +
       `CPF: ${duplicado.cpf}\n` +
       `Data: ${duplicado.data?.split('T')[0]}\n` +
@@ -378,7 +381,6 @@ form.addEventListener('submit', e => {
     }, 1500);
   });
 });
-
     filtroStatus.addEventListener('change', carregarLancamentos);
 
     function carregarLancamentos() {
